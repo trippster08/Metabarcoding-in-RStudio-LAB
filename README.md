@@ -10,13 +10,12 @@
 6. [Assign Taxonomy](#Assign-Taxonomy) </br>
 7. [Phyloseq](#Phyloseq) </br>
 
-## 1 - Computer and RStudio Preparation
 This protocol is for paired-end demultiplexed miseq sequences that have sufficient overlap to merge R1 and R2, and are going to be run on your computer, not on Hydra. It is broken up into sections, each section an `.R` document that can be opened in RStudio. Once in RStudio, each command can be run using the `Run` button, or with `control + return`. The directions for each section are in that section file. You can download this entire pipeline, including the RStudio files using this link: [Metabarcoding Pipeline - RStudio Documents](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/archive/refs/heads/main.zip).
 
-REPARE COMPUTER AND DATA FOR RUNNING PIPELINE
-However, before running RStudio, you must make sure the necessary programs are installed, and the illumina demultiplexed sequences have bee downloaded.
+However, before running RStudio, you must make sure the necessary programs are installed, and the illumina demultiplexed sequences have been downloaded.
 
-
+## 1 - Computer and RStudio Preparation
+## Prepare Computer
 ### Install/Update Programs
 Make sure you have both R and RStudio already installed and updated on your computer. If you have an SI computer, you can load/update both through the Smithsonian's Self Service Application.
 
