@@ -12,7 +12,7 @@ library(seqinr)
 library(ape)
 library(DECIPHER)
 library(ade4)
-library(filestrings)
+library(filesstrings)
 
 ## File Housekeeping ===========================================================
 
@@ -75,9 +75,9 @@ for (i in seq_along(sample.names)) {
     cutadapt_binary, args = c(
       "-e 0.2 --discard-untrimmed --minimum-length 30 -n 3 -N 0",
       "-g", paste0("file:",path.to.Fprimers),
-      "-a", paste0("file:",path.to.RprimersRC)
+      "-a", paste0("file:",path.to.RprimersRC),
       "-G", paste0("file:",path.to.Rprimers),
-      "-A", paste0("file:",path.to.FprimersRC)
+      "-A", paste0("file:",path.to.FprimersRC),
       "-o", paste0("data/working/trimmed_sequences/",sample.names[i],"_trimmed_R1.fastq.gz"),
       "-p", paste0("data/working/trimmed_sequences/",sample.names[i],"_trimmed_R2.fastq.gz"),
       paste0("data/raw/",reads.to.trim.F[i]), paste0("data/raw/",reads.to.trim.R[i])
