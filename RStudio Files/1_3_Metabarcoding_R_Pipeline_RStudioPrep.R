@@ -33,7 +33,7 @@ library(seqinr)
 library(ape)
 library(DECIPHER)
 library(ade4)
-library(filestrings)
+library(filesstrings)
 
 ## File Housekeeping ===========================================================
 # Set up your working directory. Substitute your own path for the one below.
