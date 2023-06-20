@@ -58,7 +58,7 @@ path.to.RprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Me
 ## Run Cutadapt ================================================================
 
 # Save the path to the cutadapt executable file. Your path will be different.
-cutadapt_binary <- "/Users/macdonaldk/miniconda3/envs/cutadaptenv/bin/cutadapt"
+cutadapt_binary <- "/Users/macdonaldk/miniconda3/envs/cutadapt/bin/cutadapt"
 
 # The following for loop runs cutadapt on paired samples, one pair at a time.
 
