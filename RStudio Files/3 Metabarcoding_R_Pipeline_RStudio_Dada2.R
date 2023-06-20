@@ -63,7 +63,7 @@ fnFs <- fnFs.exists
 fnRs <- fnRs.exists
 length(fnFs)
 length(fnRs)
-size(fnFs)
+file.size(fnFs)
 
 # Update your samples names
 sample.names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
