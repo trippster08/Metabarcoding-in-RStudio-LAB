@@ -73,7 +73,7 @@ cutadapt_binary <- "/Users/macdonaldk/miniconda3/envs/cutadapt/bin/cutadapt"
 for (i in seq_along(sample.names)) {
   system2(
     cutadapt_binary, args = c(
-      "-e 0.2 --discard-untrimmed --minimum-length 30 -n 3 -N 0",
+      "-e 0.2 --discard-untrimmed --minimum-length 30 -n 3 --cores=0",
       "-g", paste0("file:",path.to.Fprimers),
       "-a", paste0("file:",path.to.RprimersRC),
       "-G", paste0("file:",path.to.Rprimers),
@@ -100,7 +100,7 @@ for (i in seq_along(sample.names)) {
 # 3' primer. The 5' primer is anchored, which means it must be found in its
 # entirety, or the read is removed
 
-# -N 0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
+# --cores=0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
 # automatically detect the number of cores.
 
 # -g and -G are the paths to the 5' primers with spacers
