@@ -1,9 +1,11 @@
 # Metabarcoding Pipeline in RStudio for LAB
 1. [Computer and RStudio Preparation](#Computer-and-RStudio-Preparation) </br>
-  1.1 [Install/Update Programs](#Install/Update-Programs) </br>
-  1.2 [Get Raw Reads](#Get-Raw-Reads) </br>
-  1.3 [RStudio Preparation](#RStudio-Preparation) </br>
+  1.1. [Install/Update Programs](#Install/Update-Programs) </br>
+  1.2. [Get Raw Reads](#Get-Raw-Reads) </br>
+  1.3. [RStudio Preparation](#RStudio-Preparation) </br>
 2. [Cutadapt](#Cutadapt) </br>
+  2.1. [Cutadapt-trim](#Cutadapt-trim) <br/>
+  2.2. [Cutadapt-trim and demultiplex genes](#Cutadapt-trim-and-demultiplex-genes) <br/>
 3. [DADA2](#DADA2) </br>
 4. [Reformat and Export Files](#Reformat-and-Export-Files) </br>
 5. [Import and Combine Files](#Import-and-Combine-Files) </br>
@@ -47,6 +49,10 @@ conda config --add channels conda-forge
 We install cutadapt and create a cutadapt conda environment (called cutadaptenv) simultaneously. I typically check the anoconda webpage for cutadapt https://anaconda.org/bioconda/cutadapt and specify the version listed. The most up-to-date version is not always installed if not specified. v4.4 is an example, replace with the current version.
 ```
 conda create -n cutadapt cutadapt=4.4
+```
+You may get an error telling you that cutadapt 4.4 does not exist or cannot be found. This typically happens when installing on a Mac with M1/M2 architecture. In this case, you have to use an altered version of this code.
+```
+CONDA_SUBDIR=osx-64 conda create -n cutadapt cutadapt=4.4
 ```
 Installation usually only has to be done once for your computer. Periodically you may want to update these programs.
 
@@ -107,9 +113,10 @@ Open RStudio, and open `1_Metabarcoding_R_Pipeline_RstudioPrep.R` in the Source 
 [1.3 - Metabarcoding RStudioPrep.R](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/1_3_Metabarcoding_R_Pipeline_RStudioPrep.R)
 
 ## 2 - Cutadapt
-We use Cutadapt to remove primer sequences from our raw reads. This section ends with primer-trimmed sequences.
+We use Cutadapt to remove primer sequences from our raw reads. This section ends with primer-trimmed sequences. There are two versions of Cutadapt in this pipeline. 
 
-[2 - Cutadapt](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/2%20Cutadapt.R)
+[2.1. - Cutadapt-trim](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/2%20Cutadapt_trim.R)
+[2.2. - Cutadapt-trim and demultiplex genes](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/2%20Cutadapt_demultiplex.R)
 
 ## 3 - DADA2
 Here we use DADA2 to quality-filter and quality-trim reads, estimate error rates and denoise reads, merge paired reads, and remove chimeric sequences. This section ends with a sequence-table, which is a table containing columns of `ASV's` (Amplicon Sequence Variants), rows of `samples`, and cell values equal `# of reads`.
