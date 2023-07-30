@@ -48,8 +48,8 @@ head(sample.names)
 # (our Nextera primers do not contain these spacers). Make sure the primer
 # definition file includes primers with these spacers attached, otherwise all
 # reads will be discared as untrimmed. We have primer definition files for the
-# standard COI, 12S MiFish, and 18S_V4 iTru primer (with spacers) and for COI and 12S
-# MiFish nextera primers (without spacers).
+# standard COI, 12S MiFish, and 18S_V4 iTru primer (with spacers) and for COI
+# and 12S MiFish nextera primers (without spacers).
 
 # If your reads are short, and there is potential for readthrough, you need to
 # tell cutadapt to look for primers on the 3' end of each read, as well. These
@@ -60,10 +60,11 @@ head(sample.names)
 # For the path to the primer files, replace "PRIMERF" or "PRIMERR" with the name
 # of the forward and reverse primer file, respectively.
 
-path.to.Fprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERF.fas'"
-path.to.Rprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERR.fas'"
-path.to.FprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERF_RC.fas'"
-path.to.RprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERR_RC.fas'"
+# THE PATHS SHWON BELOW ARE EXAMPLES ONLY. PLEASE CHANGE PATH TO YOUR PRIMER FILES.
+path.to.Fprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primers/PRIMERF.fas'"
+path.to.Rprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primers/PRIMERR.fas'"
+path.to.FprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primers/PRIMERF_RC.fas'"
+path.to.RprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primers/PRIMERR_RC.fas'"
 ## Run Cutadapt ================================================================
 
 # Save the path to the cutadapt executable file. Your path will be different.
