@@ -1,0 +1,19 @@
+>iTru_MiFish_12S-F
+GTCGGTAAAACTCGTGCCAGC
+>iTruE_MiFish_12S-F
+AAGCGGTCGGTAAAACTCGTGCCAGC
+>iTruF_MiFish_12S-F
+gCCACAGTCGGTAAAACTCGTGCCAGC
+>iTruG_MiFish_12S-F
+ctGGATGGTCGGTAAAACTCGTGCCAGC
+>iTruH_MiFish_12S-F
+tgaTTGACGTCGGTAAAACTCGTGCCAGC
+
+# This is the fasta file called in Cutadapt to search for multiple Forward primers.
+	# Each primer sequence is preceded by an X. This X indicates that the primer is 
+	# found at the 5' end of the sequence and is required (it is an anchored primer).
+	# Anchored primers are mandatory in full, and if this primer is not found,
+	# the read will be removed. 
+# These are the 12S MiFish metabarcoding primer, with spacers from
+  # the Travis Glenn lab
+

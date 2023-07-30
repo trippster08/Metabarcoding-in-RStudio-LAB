@@ -1,0 +1,10 @@
+>iTru_MiFish_12S-F_RC
+GCTGGCACGAGTTTTACCGAC
+
+# is not found, it won't affect whether the read is kept or removed.
+# This is the fasta file called in Cutadapt to search for the reverse complement
+# of the Forward primers at the 3' end of R2. This primer does not have to
+# actually be at very the of the read (if there is illumina adapter sequence,
+# spacers or barcodes 3'-wards of the primer). Also, this primer is not
+# necessary: ff this primer is not found, it won't affect whether the read is
+# kept or removed.
