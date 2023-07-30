@@ -60,8 +60,8 @@ head(sample.names)
 # For the path to the primer files, replace "PRIMERF" or "PRIMERR" with the name
 # of the forward and reverse primer file, respectively.
 
-path.to.Fprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERF_spacers.fas'"
-path.to.Rprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERR_spacers.fas'"
+path.to.Fprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERF.fas'"
+path.to.Rprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERR.fas'"
 path.to.FprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERF_RC.fas'"
 path.to.RprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERR_RC.fas'"
 ## Run Cutadapt ================================================================
