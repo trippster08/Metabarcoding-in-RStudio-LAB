@@ -48,7 +48,7 @@ head(sample.names)
 # (our Nextera primers do not contain these spacers). Make sure the primer
 # definition file includes primers with these spacers attached, otherwise all
 # reads will be discared as untrimmed. We have primer definition files for the
-# standard COI, 12S MiFish, and 18S iTru primer (with spacers) and for COI and 12S
+# standard COI, 12S MiFish, and 18S_V4 iTru primer (with spacers) and for COI and 12S
 # MiFish nextera primers (without spacers).
 
 # If your reads are short, and there is potential for readthrough, you need to
