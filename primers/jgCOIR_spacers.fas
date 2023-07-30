@@ -1,0 +1,19 @@
+# This is the fasta file called in Cutadapt to search for multiple Reverse primers.
+  # Each primer sequence is preceded by an X. This X indicates that the primer is 
+  # found at the 5' end of the sequence (a non-internal primer). It is similar to an
+  # anchored primer, except the entire primer sequence does not need to be found. 
+
+
+>iTru_COI-R
+XTANACYTCNGGRTGNCCRAARAAYCA
+>iTru1_COI-R
+XAGGAATANACYTCNGGRTGNCCRAARAAYCA
+>iTru2_COI-R
+XgAGTGGTANACYTCNGGRTGNCCRAARAAYCA
+>iTru3_COI-R
+XccACGTCTANACYTCNGGRTGNCCRAARAAYCA
+>iTru4_COI-R
+XttcTCAGCTANACYTCNGGRTGNCCRAARAAYCA
+
+# These are the COI metabarcoding primer jgCOI2198, with spacers from
+  # the Travis Glenn lab
