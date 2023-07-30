@@ -41,8 +41,8 @@ head (sample.names)
 # (our Nextera primers do not contain these spacers). Make sure the primer
 # definition file includes primers with these spacers attached, otherwise all
 # reads will be discared as untrimmed. We have primer definition files for the
-# standard COI and 12S MiFish iTru primer (with spacers) and for COI and 12S
-# MiFish nextera primers (without spacers). 
+# standard COI, 12S MiFish, and 18S_V4 iTru primer (with spacers) and for COI and 12S
+# MiFish nextera primers (without spacers).
 
 # If your reads are short, and there is potential for readthrough, you need to
 # tell cutadapt to look for primers on the 3' end of each read, as well. These
@@ -50,11 +50,14 @@ head (sample.names)
 # not be anchored, so the files don't need to include any spacers, and if they
 # are not found, the read will still be kept. If you know that there will not
 # be any readthrough, you don't have to include the two paths to the RC primers.
+# For the path to the primer files, replace "PRIMERF" or "PRIMERR" with the name
+# of the forward and reverse primer file, respectively.
 
-path.to.Fprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/MiFish_12SF_spacers.fas'"
-path.to.Rprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/MiFish_12SR_spacers.fas'"
-path.to.FprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/MiFish_12SF_RC.fas'"
-path.to.RprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/MiFish_12SR_RC.fas'"
+path.to.Fprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERF.fas'"
+path.to.Rprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERR.fas'"
+path.to.FprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERF_RC.fas'"
+path.to.RprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERR_RC.fas'"
+
 ## Run Cutadapt ================================================================
 
 # Save the path to the cutadapt executable file. Your path will be different.
@@ -85,7 +88,7 @@ for (i in seq_along(sample.names)) {
     )
 }
 
-# We are including our default parameters for cutadapt. You can change these 
+# We are including our default parameters for cutadapt. You can change these
 # parameters if you have prefer others. 
 
 # -e 0.2 allows an error rate of 0.2 (20% of primer basepairs can me wrong)
@@ -100,7 +103,7 @@ for (i in seq_along(sample.names)) {
 # 3' primer. The 5' primer is anchored, which means it must be found in its
 # entirety, or the read is removed
 
-# --cores=0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
+# -N 0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
 # automatically detect the number of cores.
 
 # -g and -G are the paths to the 5' primers with spacers
