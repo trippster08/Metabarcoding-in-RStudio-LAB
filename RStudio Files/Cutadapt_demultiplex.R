@@ -20,6 +20,13 @@ library(filesstrings)
 # directly from "1_Metabarcoding_R_Pipeline_ComputerPrep".
 setwd ("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
 
+# Create the subdirectories for the trimmed reads that have been demutiplexed by
+# gene. Each subdirectory should have the same name that the primers have in the
+# primer file. In the example below, replace "GENEX" with whatever the name of 
+# that particular gene. You should create as many directories as you have genes
+# in the run.
+dir.create("data/working/trimmed_sequences/GENE1", recursive=TRUE)
+dir.create("data/working/trimmed_sequences/GENE2", recursive=TRUE)
 
 # Make a list of all the files in your "data/raw" folder.
 reads.to.trim <- list.files("data/raw")
@@ -31,7 +38,7 @@ reads.to.trim.R <- reads.to.trim[str_detect(reads.to.trim, "R2_001.fastq.gz")]
 # Separate the elements of "reads.to.trim.F" by underscore, and save the first
 # element as "sample.names".
 sample.names <- sapply(strsplit(basename(reads.to.trim.F), "_"), `[`, 1)
-head (sample.names)
+head(sample.names)
 
 # Define the path to your primer definition fasta file, if you have more than
 # one potential primer to trim. This path will be different for each user.
@@ -41,8 +48,8 @@ head (sample.names)
 # (our Nextera primers do not contain these spacers). Make sure the primer
 # definition file includes primers with these spacers attached, otherwise all
 # reads will be discared as untrimmed. We have primer definition files for the
-# standard COI and 12S MiFish iTru primer (with spacers) and for COI and 12S
-# MiFish nextera primers (without spacers). 
+# standard COI, 12S MiFish, and 18S iTru primer (with spacers) and for COI and 12S
+# MiFish nextera primers (without spacers).
 
 # If your reads are short, and there is potential for readthrough, you need to
 # tell cutadapt to look for primers on the 3' end of each read, as well. These
@@ -50,11 +57,13 @@ head (sample.names)
 # not be anchored, so the files don't need to include any spacers, and if they
 # are not found, the read will still be kept. If you know that there will not
 # be any readthrough, you don't have to include the two paths to the RC primers.
+# For the path to the primer files, replace "PRIMERF" or "PRIMERR" with the name
+# of the forward and reverse primer file, respectively.
 
-path.to.Fprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/MiFish_12SF_spacers.fas'"
-path.to.Rprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/MiFish_12SR_spacers.fas'"
-path.to.FprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/MiFish_12SF_RC.fas'"
-path.to.RprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/MiFish_12SR_RC.fas'"
+path.to.Fprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERF_spacers.fas'"
+path.to.Rprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERR_spacers.fas'"
+path.to.FprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERF_RC.fas'"
+path.to.RprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primer_files/PRIMERR_RC.fas'"
 ## Run Cutadapt ================================================================
 
 # Save the path to the cutadapt executable file. Your path will be different.
@@ -78,15 +87,15 @@ for (i in seq_along(sample.names)) {
       "-a", paste0("file:",path.to.RprimersRC),
       "-G", paste0("file:",path.to.Rprimers),
       "-A", paste0("file:",path.to.FprimersRC),
-      "-o", paste0("data/working/trimmed_sequences/",sample.names[i],"_trimmed_R1.fastq.gz"),
-      "-p", paste0("data/working/trimmed_sequences/",sample.names[i],"_trimmed_R2.fastq.gz"),
+      "-o", paste0("data/working/trimmed_sequences/{name1}/",sample.names[i],"_trimmed_R1.fastq.gz"),
+      "-p", paste0("data/working/trimmed_sequences/{name1}/",sample.names[i],"_trimmed_R2.fastq.gz"),
       paste0("data/raw/",reads.to.trim.F[i]), paste0("data/raw/",reads.to.trim.R[i])
       )
     )
 }
 
 # We are including our default parameters for cutadapt. You can change these
-# parameters if you have prefer others. 
+# parameters if you have prefer others.
 
 # -e 0.2 allows an error rate of 0.2 (20% of primer basepairs can me wrong)
 
@@ -96,11 +105,11 @@ for (i in seq_along(sample.names)) {
 # empty reads. We deal with this later in the pipeline.
 
 # -n 3 This is the minimum number of basepairs that the primer must overlap the
-# read to be counted and removed. Three is the default. This only affects the 
+# read to be counted and removed. Three is the default. This only affects the
 # 3' primer. The 5' primer is anchored, which means it must be found in its
 # entirety, or the read is removed
 
-# -N 0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
+# --cores=0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
 # automatically detect the number of cores.
 
 # -g and -G are the paths to the 5' primers with spacers
