@@ -100,8 +100,8 @@ for (i in seq_along(sample.names)) {
       "-a", paste0("file:",path.to.RprimersRC),
       "-G", paste0("file:",path.to.Rprimers),
       "-A", paste0("file:",path.to.FprimersRC),
-      "-o", paste0("data/working/trimmed_sequences/{name1}/",sample.names[i],"_trimmed_R1.fastq.gz"),
-      "-p", paste0("data/working/trimmed_sequences/{name1}/",sample.names[i],"_trimmed_R2.fastq.gz"),
+      "-o", paste0("data/working/trimmed_sequences/{name}/",sample.names[i],"_trimmed_R1.fastq.gz"),
+      "-p", paste0("data/working/trimmed_sequences/{name}/",sample.names[i],"_trimmed_R2.fastq.gz"),
       paste0("data/raw/",reads.to.trim.F[i]), paste0("data/raw/",reads.to.trim.R[i])
       )
     )
