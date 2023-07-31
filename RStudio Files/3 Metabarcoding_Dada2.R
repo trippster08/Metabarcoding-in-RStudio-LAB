@@ -144,8 +144,8 @@ names(filtRs) <- sample.names
 # gracefully when using the multithreading functionality".
 
 # "truncLen=c(i,j)" is how you tell Dada2 where to truncate all forward (i) and
-# reverse (j) reads. Using "0" means reads will not be truncated. maxEE sets how
-# many expected errors are allowed before a read is filtered out.
+# reverse (j) reads. Using "0" means reads will not be truncated. 
+# maxEE sets how many expected errors are allowed before a read is filtered out.
 
 # The amount to truncate is a common question, and very unsettled. I usually
 # truncate at the point just shorter than where the red line (proportion of
@@ -343,8 +343,6 @@ seqtab.nochim <- removeBimeraDenovo(
 # We look at the dimensions of the new sequence-table
 dim(seqtab.nochim)
 
-# This looks at the % of samples that were not chimeras.
-sum(seqtab.nochim)/sum(seqtab)
 
 ## Track Reads Through Dada2 Process ===========================================
 
