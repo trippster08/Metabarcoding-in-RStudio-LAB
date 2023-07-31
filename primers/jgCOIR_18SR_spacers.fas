@@ -15,6 +15,14 @@ XccACGTCTANACYTCNGGRTGNCCRAARAAYCA
 >COI
 XttcTCAGCTANACYTCNGGRTGNCCRAARAAYCA
 >18S
+XACTTTCGTTCTTGATYRATGA
+>18S
+XgAGACTACTTTCGTTCTTGATYRATGA
+>18S
+XcgATTCCACTTTCGTTCTTGATYRATGA
+>18S
+XtctCAATCACTTTCGTTCTTGATYRATGA
 
 # These are the COI metabarcoding primer jgCOI2198, with spacers from
-  # the Travis Glenn lab
+# the Travis Glenn lab, and the V4 18S metabarcoding primers, also with spacers
+# from the Travis Glenn lab.

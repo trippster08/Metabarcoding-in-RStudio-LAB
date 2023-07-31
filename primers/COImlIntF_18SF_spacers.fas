@@ -16,7 +16,15 @@ XatcGGTTGGWACWGGWTGAACWGTWTAYCCYCC
 >COI
 XtcgGTCAAGGWACWGGWTGAACWGTWTAYCCYCC
 >18S
+XCCAGCASCYGCGGTAATTCC
+>18S
+XcAACACCCAGCASCYGCGGTAATTCC
+>18S
+XatcGGTTCCAGCASCYGCGGTAATTCC
+>18S
+XtcgGTCAACCAGCASCYGCGGTAATTCC
 
 
-# These are the internal COI metabarcoding primer COImlIntF, with spacers from
-  # the Travis Glenn lab
+# These are the COI metabarcoding primer jgCOI2198, with spacers from
+# the Travis Glenn lab, and the V4 18S metabarcoding primers, also with spacers
+# from the Travis Glenn lab.
