@@ -12,7 +12,7 @@
 6. [Assign Taxonomy](#Assign-Taxonomy) </br>
 7. [Phyloseq](#Phyloseq) </br>
 
-This protocol is for paired-end demultiplexed miseq sequences that have sufficient overlap to merge R1 and R2, and are going to be run on your computer, not on Hydra. It is broken up into sections, each section an `.R` document that can be opened in RStudio. Once in RStudio, each command can be run using the `Run` button, or with `control + return`. The directions for each section are in that section file. You can download this entire pipeline, including the RStudio files using this link: [Metabarcoding Pipeline - RStudio Documents](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/archive/refs/heads/main.zip).
+This protocol is for paired-end demultiplexed miseq sequences that have sufficient overlap to merge R1 and R2, and are going to be run on your computer, not on Hydra. It is broken up into sections, each section an `.R` document that can be opened in RStudio. Once in RStudio, each command can be run using the `Run` button, or with `control + return`. The directions for each section are in that section file. You can download this entire pipeline, including the RStudio files using this link: [Metabarcoding Pipeline - RStudio Documents](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/archive/refs/heads/main.zip). I usually download a version of this pipeline for each run I analyse (in case any changes need to be made, and so the primer folder is in the correct place) and save it in the working directory of that run.
 
 However, before running RStudio, you must make sure the necessary programs are installed, and the illumina demultiplexed sequences have been downloaded.
 
@@ -97,7 +97,9 @@ conda activate cutadapt
 cutadapt --version
 ```
 ## Get Raw Reads
-Create a directory for your project. I perform all my metabarcoding analyses in a directory called "/Projects_Metabarcoding". For these instructions, I'm going to use "PROJECTNAME" to denote the current project and USERNAME to denote your laptop home. Replace with your project name and username before using. Here is an example command for making a project directory.
+Get raw reads. If you download them directly using BaseSpace Downloader, it creates a directory that will be your working directory for this pipeline.  Place this directory where you want to run the pipeline.  If you get them already downloaded in a folder, then either place that folder wherever you want to run this pipeline, and use it as the working directory, or make a new run-specific directory to place these sequences. Below is an example for making a run-specific directory to place your sequences. I perform all my metabarcoding analyses directly in the BaseSpace-downloaded directory within a parent directory called "/Projects_Metabarcoding".
+
+DO NOT USE THIS COMMAND AS-IS, USE YOUR OWN PATH, INCLUDING YOUR USERNAME AND WHATEVER PROJECT NAME YOU WANT TO USE!
 ```
 mkdir -p /Users/USERNAME/Dropbox\ \(Smithsonian\)/Projects_Metabarcoding/PROJECTNAME.
 ```
@@ -106,14 +108,16 @@ Download the folder containing your raw reads into this project directory using 
 The rest of this pipeline is run through RStudio.
 
 ## RStudio Preparation
-Here we install and load all the R libraries needed for this pipeline. We also set up our directory structure and find, load, and copy the raw Illumina read files to the directory from which they will be analyzed. 
+The first thing to do after opening RStudio is create a new project, select to creat it from an "Existing Directory", and chose the directory that you will be using as your working directory. Once you have created this project, it will make this directory the current working directory, and you won't need to set your working directory later.
+
+Next we install and load all the R libraries needed for this pipeline. We also set up our directory structure and find, load, and copy the raw Illumina read files to the directory from which they will be analyzed. 
 
 Open RStudio, and open `1_Metabarcoding_R_Pipeline_RstudioPrep.R` in the Source Editor (typically the top left pane). You can run all commands in the source editor using the `Run` button or `control + return`.
 
 [1.3 - Metabarcoding RStudioPrep.R](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/1_3_Metabarcoding_R_Pipeline_RStudioPrep.R)
 
 ## 2 - Cutadapt
-We use Cutadapt to remove primer sequences from our raw reads. This section ends with primer-trimmed sequences. There are two versions of Cutadapt in this pipeline. 
+We use Cutadapt to remove primer sequences from our raw reads. This section ends with primer-trimmed sequences. There are two versions of Cutadapt in this pipeline. The first version is if you only have a single gene-product in your run. The second is if you have more than one gene product in your run. In this case, cutadapt will trim primers, but also sort reads dependent upon which gene-primers it found (e.g. it will move reads from which it removed 18S primers into an 18S folder, and reads from which it removed COI primers into a COI folder).
 
 [2.1. - Cutadapt-trim](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/2%20Cutadapt_trim.R)
 [2.2. - Cutadapt-trim and demultiplex genes](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/2%20Cutadapt_demultiplex.R)
