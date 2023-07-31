@@ -16,8 +16,11 @@ library(filesstrings)
 
 ## File Housekeeping ===========================================================
 
-# Set your working directory to you project directory, again, if not coming
-# directly from "1_Metabarcoding_R_Pipeline_ComputerPrep".
+# Set up your working directory. If you created your new project in the
+# directory you want as your working directory (or came directory from the
+# previous step in the pipeline), you don't need to do this, and
+# skip to the next RStudio command. If you need to set your working directory,
+# substitute your own path for the one below.
 setwd ("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
 
 # Create the subdirectories for the trimmed reads that have been demutiplexed by
@@ -49,22 +52,31 @@ head(sample.names)
 # definition file includes primers with these spacers attached, otherwise all
 # reads will be discared as untrimmed. We have primer definition files for the
 # standard COI, 12S MiFish, and 18S_V4 iTru primer (with spacers) and for COI
-# and 12S MiFish nextera primers (without spacers).
+# and 12S MiFish nextera primers (without spacers). Our primer definition files
+# will be downloaded when you download the pipeline. To use a pair of these
+# files, just replace "PRIMERF" or "PRIMERR" with the name of the actual primer
+# file in the directory "primers" in the paths defined below. If you have
+# different primers to remove, open an existing primer file and follow the
+# formatting in creating your new primer files.
 
 # If your reads are short, and there is potential for readthrough, you need to
 # tell cutadapt to look for primers on the 3' end of each read, as well. These
 # primers will be ther reverse complement of the normal primers. They also will
 # not be anchored, so the files don't need to include any spacers, and if they
-# are not found, the read will still be kept. If you know that there will not
-# be any readthrough, you don't have to include the two paths to the RC primers.
-# For the path to the primer files, replace "PRIMERF" or "PRIMERR" with the name
-# of the forward and reverse primer file, respectively.
+# are not found, the read will still be kept. 
 
-# THE PATHS SHWON BELOW ARE EXAMPLES ONLY. PLEASE CHANGE PATH TO YOUR PRIMER FILES.
-path.to.Fprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primers/PRIMERF.fas'"
-path.to.Rprimers <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primers/PRIMERR.fas'"
-path.to.FprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primers/PRIMERF_RC.fas'"
-path.to.RprimersRC <- "'/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Metabarcoding_Pipeline_in_RStudio/primers/PRIMERR_RC.fas'"
+# If you know that there will not be any readthrough, you can remove the two
+# paths to the RC primers, and two entire lines from the cutadapt arguments:
+# following and including "-a" and following and including "-A". Also remove
+# "-n 2", because you don't need to run cutadapt twice, since each read will
+# only have one primer.
+
+# THE PATHS SHOWN BELOW ARE EXAMPLES ONLY. PLEASE CHANGE PATH TO YOUR PRIMER FILES.
+path.to.Fprimers <- "Metabarcoding-in-RStudio-LAB-multi-gene/primers/PRIMERF.fas"
+path.to.Rprimers <- "Metabarcoding-in-RStudio-LAB-multi-gene/primers/PRIMERR.fas"
+path.to.FprimersRC <- "Metabarcoding-in-RStudio-LAB-multi-gene/primers/PRIMERF_RC.fas"
+path.to.RprimersRC <- "Metabarcoding-in-RStudio-LAB-multi-gene/primers/PRIMERR_RC.fas"
+
 ## Run Cutadapt ================================================================
 
 # Save the path to the cutadapt executable file. Your path will be different.
@@ -83,7 +95,7 @@ cutadapt_binary <- "/Users/macdonaldk/miniconda3/envs/cutadapt/bin/cutadapt"
 for (i in seq_along(sample.names)) {
   system2(
     cutadapt_binary, args = c(
-      "-e 0.2 --discard-untrimmed --minimum-length 30 -n 3 --cores=0",
+      "-e 0.2 --discard-untrimmed --minimum-length 30 -n 2 -O 3 --cores=0",
       "-g", paste0("file:",path.to.Fprimers),
       "-a", paste0("file:",path.to.RprimersRC),
       "-G", paste0("file:",path.to.Rprimers),
@@ -105,10 +117,15 @@ for (i in seq_along(sample.names)) {
 # and sometimes it removes the sequence of the reads, but not the name, leaving
 # empty reads. We deal with this later in the pipeline.
 
-# -n 3 This is the minimum number of basepairs that the primer must overlap the
+# -O 3 This is the minimum number of basepairs that the primer must overlap the
 # read to be counted and removed. Three is the default. This only affects the
 # 3' primer. The 5' primer is anchored, which means it must be found in its
 # entirety, or the read is removed
+
+# -n 2 This is the number of times to run cutadapt on each sample. You may need
+# to run cutadapt twice if you have readthrough and need to remove primers from
+# the 3' end as well as the 5' end. Cutadapt will only remove one primer from
+# a sample each time it's run.
 
 # --cores=0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
 # automatically detect the number of cores.
@@ -121,3 +138,34 @@ for (i in seq_along(sample.names)) {
 # -p is the output for the trimmed paired R2 reads
 
 # The final line contains the two paired input files
+
+# It appears that sometimes when you have multiple genes in a single run,you get
+# micro-contamination, a very small number of sequences of the wrong gene in
+# your target gene directory. We will check to see if this happens, and if it
+# does, remove these off-target reads.
+
+# Check to see how many wrong-gene occurances there are for one gene. 
+list.files ("data/working/trimmed_sequences/18S", pattern="COI", full.names = TRUE)
+# If you get anything other than "character(0)", save the names of the samples
+# with these micro-contaminations. I call it "gene1" instead of it's gene name
+# because R does not allow objects to start with a number, so an alternate name
+# is required for ribosomal genes (18S, 16S, 12S, etc).
+gene1.contam <- sort(list.files ("data/working/trimmed_sequences/18S", pattern="COI", full.names = TRUE))
+# Check your object to make sure the command worked
+head(gene1.contam)
+# Check the file size of this object to get an estimate of the number of reads
+# each micro-contaminate has. If file sizes are < 10000, it contains less than
+# 20 reads (and file sizes below 50 are empty). If you have any files that are
+# signficantly larger, you may have contaminatino issues.
+file.size(gene1.contam)
+# Remove these micro-contaminates
+file.remove(gene1.contam)
+# Check to make sure the removal worked. You should get "character(0)".
+list.files ("data/working/trimmed_sequences/18S", pattern="COI", full.names = TRUE)
+# Repeat this process with your second gene. Make sure to reverse the path to
+# your trimmed reads, and "pattern=" arguments
+gene2.contam <- sort(list.files ("data/working/trimmed_sequences/COI", pattern="18S", full.names = TRUE))
+head(gene2.contam)
+file.size(gene2.contam)
+file.remove(gene2.contam)
+list.files ("data/working/trimmed_sequences/COI", pattern="18S", full.names = TRUE)
