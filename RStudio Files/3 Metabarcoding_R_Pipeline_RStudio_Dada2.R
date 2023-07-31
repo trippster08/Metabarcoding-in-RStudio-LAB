@@ -18,7 +18,11 @@ library(filesstrings)
 
 ## File Housekeeping ===========================================================
 
-# Set your working directory to you project directory if necessary.
+# Set up your working directory. If you created your new project in the
+# directory you want as your working directory (or came directory from the
+# previous step in the pipeline), you don't need to do this, and
+# skip to the next RStudio command. If you need to set your working directory,
+# substitute your own path for the one below.
 setwd("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
   # Set a path to the directory with the cutadapt-trimmed reads.
 path <- "data/working/trimmed_sequences"
