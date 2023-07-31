@@ -3,9 +3,7 @@
 # estimates to denoise reads, merge paired reads, and remove chimeric sequences
 
 ## Load Libraries ==============================================================
-# Load all R packages you may need, if not coming directly from
-  # "2 Metabarcoding_R_Pipeline_cutadapt".
-
+# Load all R packages you may need if not coming directly from the previous step. 
 library(dada2)
 library(digest)
 library(phyloseq)
@@ -24,7 +22,8 @@ library(filesstrings)
 # skip to the next RStudio command. If you need to set your working directory,
 # substitute your own path for the one below.
 setwd("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
-  # Set a path to the directory with the cutadapt-trimmed reads.
+
+# Set a path to the directory with the cutadapt-trimmed reads.
 path <- "data/working/trimmed_sequences"
 
 # This lists the files inside the selected folder.
