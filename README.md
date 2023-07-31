@@ -1,6 +1,6 @@
 # Metabarcoding Pipeline in RStudio for LAB
 1. [Computer and RStudio Preparation](#Computer-and-RStudio-Preparation) </br>
-  1.1. [Install/Update Programs](#Install/Update-Programs) </br>
+  1.1. [Install/Update Computer Programs](#Install/Update-Computer-Programs) </br>
   1.2. [Get Raw Reads](#Get-Raw-Reads) </br>
   1.3. [RStudio Preparation](#RStudio-Preparation) </br>
 2. [Cutadapt](#Cutadapt) </br>
@@ -17,8 +17,7 @@ This protocol is for paired-end demultiplexed miseq sequences that have sufficie
 However, before running RStudio, you must make sure the necessary programs are installed, and the illumina demultiplexed sequences have been downloaded.
 
 ## 1 - Computer and RStudio Preparation
-## Prepare Computer
-### Install/Update Programs
+### Install/Update Computer Programs
 Make sure you have both R and RStudio already installed and updated on your computer. If you have an SI computer, you can load/update both through the Smithsonian's Self Service Application.
 
 #### Install miniconda
@@ -96,7 +95,7 @@ conda activate cutadapt
 ```
 cutadapt --version
 ```
-## Get Raw Reads
+### Get Raw Reads
 Get raw reads. If you download them directly using BaseSpace Downloader, it creates a directory that will be your working directory for this pipeline.  Place this directory where you want to run the pipeline.  If you get them already downloaded in a folder, then either place that folder wherever you want to run this pipeline, and use it as the working directory, or make a new run-specific directory to place these sequences. Below is an example for making a run-specific directory to place your sequences. I perform all my metabarcoding analyses directly in the BaseSpace-downloaded directory within a parent directory called "/Projects_Metabarcoding".
 
 DO NOT USE THIS COMMAND AS-IS, USE YOUR OWN PATH, INCLUDING YOUR USERNAME AND WHATEVER PROJECT NAME YOU WANT TO USE!
@@ -107,7 +106,7 @@ Download the folder containing your raw reads into this project directory using 
 
 The rest of this pipeline is run through RStudio.
 
-## RStudio Preparation
+### RStudio Preparation
 The first thing to do after opening RStudio is create a new project, select to creat it from an "Existing Directory", and chose the directory that you will be using as your working directory. Once you have created this project, it will make this directory the current working directory, and you won't need to set your working directory later.
 
 Next we install and load all the R libraries needed for this pipeline. We also set up our directory structure and find, load, and copy the raw Illumina read files to the directory from which they will be analyzed. 
