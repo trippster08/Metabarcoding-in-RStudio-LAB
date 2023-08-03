@@ -144,7 +144,7 @@ sequences.dna <- DNAStringSet(sequences)
 # DNAStringSet from "sequences".)
 sequences.rna <- RNAStringSet(sequences.dna)
 
-# Made an alignment from your DNA or RNA data, and change "useStructures" 
+# Make an alignment from your DNA or RNA data, and change "useStructures" 
 # accordingly.
 alignment.dna <- AlignSeqs(
   sequences.dna,
