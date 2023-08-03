@@ -4,9 +4,11 @@
   1.2. [Get Raw Reads](#Get-Raw-Reads) </br>
   1.3. [RStudio Preparation](#RStudio-Preparation) </br>
 2. [Cutadapt](#Cutadapt) </br>
-  2.1. [Cutadapt-trim](#Cutadapt-trim) <br/>
-  2.2. [Cutadapt-trim and demultiplex genes](#Cutadapt-trim-and-demultiplex-genes) <br/>
+  2a. [Cutadapt-trim](#Cutadapt-trim) <br/>
+  2b. [Cutadapt-trim and demultiplex genes](#Cutadapt-trim-and-demultiplex-genes) <br/>
 3. [DADA2](#DADA2) </br>
+  3a. [DADA2 single gene](#DADA2-multiple-genes) <br/>
+  3b. [DADA2 multiple genes](#DADA2-multiple-genes) <br/>
 4. [Reformat and Export Files](#Reformat-and-Export-Files) </br>
 5. [Import and Combine Files](#Import-and-Combine-Files) </br>
 6. [Assign Taxonomy](#Assign-Taxonomy) </br>
@@ -96,7 +98,7 @@ conda activate cutadapt
 cutadapt --version
 ```
 ### Get Raw Reads
-Get raw reads. If you download them directly using BaseSpace Downloader, it creates a directory that will be your working directory for this pipeline.  Place this directory where you want to run the pipeline.  If you get them already downloaded in a folder, then either place that folder wherever you want to run this pipeline, and use it as the working directory, or make a new run-specific directory to place these sequences. Below is an example for making a run-specific directory to place your sequences. I perform all my metabarcoding analyses directly in the BaseSpace-downloaded directory within a parent directory called "/Projects_Metabarcoding".
+Get raw reads. If you download them directly using BaseSpace Downloader, it creates a directory that will be your working directory for this pipeline.  Place this directory where you want to run the pipeline.  If you get reads already downloaded in a folder, then either place that folder wherever you want to run this pipeline, and use it as the working directory, or make a new run-specific directory to place these sequences. Below is an example for making a run-specific directory to place your sequences. I perform all my metabarcoding analyses directly in the BaseSpace-downloaded directory within a parent directory called "/Projects_Metabarcoding".
 
 DO NOT USE THIS COMMAND AS-IS, USE YOUR OWN PATH, INCLUDING YOUR USERNAME AND WHATEVER PROJECT NAME YOU WANT TO USE!
 ```
@@ -116,15 +118,16 @@ Open RStudio, and open `1_Metabarcoding_R_Pipeline_RstudioPrep.R` in the Source 
 [1.3 - Metabarcoding RStudioPrep.R](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/1_3_Metabarcoding_R_Pipeline_RStudioPrep.R)
 
 ## 2 - Cutadapt
-We use Cutadapt to remove primer sequences from our raw reads. This section ends with primer-trimmed sequences. There are two versions of Cutadapt in this pipeline. The first version is if you only have a single gene-product in your run. The second is if you have more than one gene product in your run. In this case, cutadapt will trim primers, but also sort reads dependent upon which gene-primers it found (e.g. it will move reads from which it removed 18S primers into an 18S folder, and reads from which it removed COI primers into a COI folder).
+We use Cutadapt to remove primer sequences from our raw reads. This section ends with primer-trimmed sequences. There are two versions of Cutadapt in this pipeline. The first version (2a) is for Illumina runs with only a single gene-product. Use the second (2b) if you have more than one gene product in your run. In this case, cutadapt will trim primers, but also sort reads dependent upon which gene-specific primers it removed (e.g. it will move reads from which it removed 18S primers into an 18S folder, and reads from which it removed COI primers into a COI folder).
 
-[2.1. - Cutadapt-trim](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/2%20Cutadapt_trim.R)
-[2.2. - Cutadapt-trim and demultiplex genes](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/2%20Cutadapt_demultiplex.R)
+[2a. - Cutadapt-trim](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/2%20Cutadapt_trim.R)
+[2b. - Cutadapt-trim and demultiplex genes](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/2%20Cutadapt_demultiplex.R)
 
 ## 3 - DADA2
-Here we use DADA2 to quality-filter and quality-trim reads, estimate error rates and denoise reads, merge paired reads, and remove chimeric sequences. This section ends with a sequence-table, which is a table containing columns of `ASV's` (Amplicon Sequence Variants), rows of `samples`, and cell values equal `# of reads`.
+Here we use DADA2 to quality-filter and quality-trim reads, estimate error rates and denoise reads, merge paired reads, and remove chimeric sequences. This section ends with a sequence-table, which is a table containing columns of `ASV's` (Amplicon Sequence Variants), rows of `samples`, and cell values equal `# of reads`. There are two versions for this section of the pipeline too. Section 3a is for Illumina runs with a single target gene, where you used Cutadapt 2a. If you used Cutadapt 2b, and had multiple genes in your run, use DADA2 3b.
 
-[3 - DADA2](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/3%20Metabarcoding_R_Pipeline_RStudio_Dada2.R)
+[3a - DADA2 single gene](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/3%20Metabarcoding_R_Pipeline_RStudio_Dada2.R)
+[3b - DADA2 multiple genes](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/3%20Metabarcoding_R_Pipeline_RStudio_Dada2.R)
 
 ## 4 - Reformat and Export Files
 Here we creat and export variants of the sequence-table created in section 3. Many of these are not necessary for your analysis, but may be useful in some cases, as described in the section descriptions. 
