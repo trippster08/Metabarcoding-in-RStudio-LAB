@@ -130,13 +130,13 @@ Here we use DADA2 to quality-filter and quality-trim reads, estimate error rates
 [3b - DADA2 multiple genes](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/3%20Metabarcoding_R_Pipeline_RStudio_Dada2.R)
 
 ## 4 - Reformat and Export Files
-Here we creat and export variants of the sequence-table created in section 3. Many of these are not necessary for your analysis, but may be useful in some cases, as described in the section descriptions. 
+Here we create and export variants of the sequence-table created in section 3. Many of these are not necessary for your analysis, but may be useful in some cases, as described in the section descriptions. 
 
 One variant is a Sequence-List table (a tidy table containing columns of `sample name`, `ASV`, and   `# of reads`. There is a separate row for each `sample name`/`ASV` combination.) This table is useful if you have sequences for multiple runs, because they can be directly concatenated in a text file and condensed back into a sequence-table for downstream analysis.
 
 A second variant is a feature-table. This table contains columns of `sample names` with rows of `ASV's`, and cell values equal to `# of reads`. This is essentially a transposed sequence-table. It is also the output of the metabarcoding program Qiime2, and is included in case you have other analyses in this program that you may want to combine or compare. One aspect of the Qiime2 feature-table is that ASV's are not shown as entire sequences, but as a md5 hash (see section description for for information about md5 encryption), and this section will also add md5 hash information for each ASV. Even if a feature-table is not needed, it is often good to have md5 hash's available for downstreama analyses.
 
-Finally, you can also create and export your data in a format we refer to as "feature-to-fasta". This creates a fasta file containing all the ASV's found in each sample. Each `ASV` will be labeled with the `sample name`, `ASV hash`, and `# of reads` for that `sample name`/`ASV` combination. This format is useful for making trees (espicially in low-diversity studies, or when sequencing single-organism samples) to look at distribution of ASV's across samples.
+Finally, you can also create and export your data in a format we refer to as "feature-to-fasta". This creates a fasta file containing all the ASV's/sample combinations found (i.e. each well of the sequence-table or feature-table will have a sequence in the fasta). Each sequence will be labeled with the `sample name`, `ASV hash`, and `# of reads` for that `sample name`/`ASV` combination. This format is useful for making trees (espicially in low-diversity studies, or when sequencing single-organism samples) to look at distribution of ASV's across samples, and to visualize possible "pseudogenes".
 
 [4 - Format and Export Files](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/4%20Metabarcoding_R_Pipeline_RStudio_FormatandExportFiles.R)
 
