@@ -7,8 +7,9 @@
 if (!requireNamespace("BiocManager", quietly = TRUE)){
   install.packages("BiocManager")
 }
-# Install Dada2
-BiocManager::install("dada2", version = "3.15")
+# Install Dada2. You may get an error telling you to install a different version
+# of Dada2. Change "3.17" to whatever version RStudio tells you.
+BiocManager::install("dada2", version = "3.17")
 # Install Phyloseq
 BiocManager::install("phyloseq")
 # Install DECIPHER
@@ -36,7 +37,10 @@ library(ade4)
 library(filesstrings)
 
 ## File Housekeeping ===========================================================
-# Set up your working directory. Substitute your own path for the one below.
+# Set up your working directory. If you created your new project in the
+# directory you want as your working directory, you don't need to do this, and
+# skip to the next RStudio command. If you need to set your working directory,
+# substitute your own path for the one below.
 # Note: If you have spaces or special characters in the path to your working
 # directory, you don't need a character escape (i.e. no \ preceding spaces or
 # special characters).

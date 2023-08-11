@@ -3,18 +3,28 @@
   # anchored, which means it is found at the 5' end of the sequence, and is
   # required (i.e. the read will not be kept if the primer is not found).
 
->iTru_MiFish_12S-F
+
+
+>COI
+^GGWACWGGWTGAACWGTWTAYCCYCC
+>COI
+^GGTACGGWACWGGWTGAACWGTWTAYCCYCC
+>COI
+^cAACACGGWACWGGWTGAACWGTWTAYCCYCC
+>COI
+^atcGGTTGGWACWGGWTGAACWGTWTAYCCYCC
+>COI
+^tcgGTCAAGGWACWGGWTGAACWGTWTAYCCYCC
+>12S
 ^GTCGGTAAAACTCGTGCCAGC
->iTruE_MiFish_12S-F
+>12S
 ^AAGCGGTCGGTAAAACTCGTGCCAGC
->iTruF_MiFish_12S-F
+>12S
 ^gCCACAGTCGGTAAAACTCGTGCCAGC
->iTruG_MiFish_12S-F
+>12S
 ^ctGGATGGTCGGTAAAACTCGTGCCAGC
->iTruH_MiFish_12S-F
+>12S
 ^tgaTTGACGTCGGTAAAACTCGTGCCAGC
 
-
-# These are the 12S MiFish metabarcoding primer, with spacers from
+# These are the internal COI metabarcoding primer COImlIntF, with spacers from
   # the Travis Glenn lab
-
