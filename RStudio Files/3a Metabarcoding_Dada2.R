@@ -3,9 +3,7 @@
 # estimates to denoise reads, merge paired reads, and remove chimeric sequences
 
 ## Load Libraries ==============================================================
-# Load all R packages you may need, if not coming directly from
-  # "2 Metabarcoding_R_Pipeline_cutadapt".
-
+# Load all R packages you may need if not coming directly from the previous step. 
 library(dada2)
 library(digest)
 library(phyloseq)
@@ -18,9 +16,14 @@ library(filesstrings)
 
 ## File Housekeeping ===========================================================
 
-# Set your working directory to you project directory if necessary.
+# Set up your working directory. If you created your new project in the
+# directory you want as your working directory (or came directory from the
+# previous step in the pipeline), you don't need to do this, and
+# skip to the next RStudio command. If you need to set your working directory,
+# substitute your own path for the one below.
 setwd("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
-  # Set a path to the directory with the cutadapt-trimmed reads.
+
+# Set a path to the directory with the cutadapt-trimmed reads.
 path <- "data/working/trimmed_sequences"
 
 # This lists the files inside the selected folder.
@@ -141,8 +144,8 @@ names(filtRs) <- sample.names
 # gracefully when using the multithreading functionality".
 
 # "truncLen=c(i,j)" is how you tell Dada2 where to truncate all forward (i) and
-# reverse (j) reads. Using "0" means reads will not be truncated. maxEE sets how
-# many expected errors are allowed before a read is filtered out.
+# reverse (j) reads. Using "0" means reads will not be truncated. 
+# maxEE sets how many expected errors are allowed before a read is filtered out.
 
 # The amount to truncate is a common question, and very unsettled. I usually
 # truncate at the point just shorter than where the red line (proportion of
@@ -340,8 +343,6 @@ seqtab.nochim <- removeBimeraDenovo(
 # We look at the dimensions of the new sequence-table
 dim(seqtab.nochim)
 
-# This looks at the % of samples that were not chimeras.
-sum(seqtab.nochim)/sum(seqtab)
 
 ## Track Reads Through Dada2 Process ===========================================
 

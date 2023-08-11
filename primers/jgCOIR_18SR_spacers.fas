@@ -4,16 +4,25 @@
   # required (i.e. the read will not be kept if the primer is not found).
 
 
->iTru_COI-R
+>COI
 ^TANACYTCNGGRTGNCCRAARAAYCA
->iTru1_COI-R
+>COI
 ^AGGAATANACYTCNGGRTGNCCRAARAAYCA
->iTru2_COI-R
+>COI
 ^gAGTGGTANACYTCNGGRTGNCCRAARAAYCA
->iTru3_COI-R
+>COI
 ^ccACGTCTANACYTCNGGRTGNCCRAARAAYCA
->iTru4_COI-R
+>COI
 ^ttcTCAGCTANACYTCNGGRTGNCCRAARAAYCA
+>18S
+^ACTTTCGTTCTTGATYRATGA
+>18S
+^gAGACTACTTTCGTTCTTGATYRATGA
+>18S
+^cgATTCCACTTTCGTTCTTGATYRATGA
+>18S
+^tctCAATCACTTTCGTTCTTGATYRATGA
 
 # These are the COI metabarcoding primer jgCOI2198, with spacers from
-  # the Travis Glenn lab
+# the Travis Glenn lab, and the V4 18S metabarcoding primers, also with spacers
+# from the Travis Glenn lab.
