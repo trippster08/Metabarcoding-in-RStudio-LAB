@@ -4,11 +4,7 @@
   1.2. [Get Raw Reads](#get-raw-reads) </br>
   1.3. [RStudio Preparation](#rstudio-preparation) </br>
 2. [Cutadapt](#cutadapt) </br>
-  2a. [Cutadapt-trim](#cutadapt-trim) <br/>
-  2b. [Cutadapt-trim and demultiplex genes](#Cutadapt-trim-and-demultiplex-genes) <br/>
-3. [DADA2](#ada2) </br>
-  3a. [DADA2 single gene](#dada2-single-gene) <br/>
-  3b. [DADA2 multiple genes](#dada2-multiple-genes) <br/>
+3. [DADA2](#dada2) </br>
 4. [Reformat and Export Files](#reformat-and-export-files) </br>
 5. [Import and Combine Files](#import-and-combine-files) </br>
 6. [Assign Taxonomy](#assign-taxonomy) </br>
