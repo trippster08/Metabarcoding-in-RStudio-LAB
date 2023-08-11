@@ -1,25 +1,25 @@
 # Metabarcoding Pipeline in RStudio for LAB
-1. [Computer and RStudio Preparation](#Computer-and-RStudio-Preparation) </br>
-  1.1. [Install/Update Computer Programs](#Install/Update-Computer-Programs) </br>
-  1.2. [Get Raw Reads](#Get-Raw-Reads) </br>
-  1.3. [RStudio Preparation](#RStudio-Preparation) </br>
-2. [Cutadapt](#Cutadapt) </br>
-  2a. [Cutadapt-trim](#Cutadapt-trim) <br/>
+1. [Computer and RStudio Preparation](#computer-and-rstudio-preparation) </br>
+  1.1. [Install/Update Computer Programs](#install/update-computer-programs) </br>
+  1.2. [Get Raw Reads](#get-raw-reads) </br>
+  1.3. [RStudio Preparation](#rstudio-preparation) </br>
+2. [Cutadapt](#cutadapt) </br>
+  2a. [Cutadapt-trim](#cutadapt-trim) <br/>
   2b. [Cutadapt-trim and demultiplex genes](#Cutadapt-trim-and-demultiplex-genes) <br/>
-3. [DADA2](#DADA2) </br>
-  3a. [DADA2 single gene](#DADA2-multiple-genes) <br/>
-  3b. [DADA2 multiple genes](#DADA2-multiple-genes) <br/>
-4. [Reformat and Export Files](#Reformat-and-Export-Files) </br>
-5. [Import and Combine Files](#Import-and-Combine-Files) </br>
-6. [Assign Taxonomy](#Assign-Taxonomy) </br>
-7. [Phyloseq](#Phyloseq) </br>
+3. [DADA2](#ada2) </br>
+  3a. [DADA2 single gene](#dada2-single-gene) <br/>
+  3b. [DADA2 multiple genes](#dada2-multiple-genes) <br/>
+4. [Reformat and Export Files](#reformat-and-export-files) </br>
+5. [Import and Combine Files](#import-and-combine-files) </br>
+6. [Assign Taxonomy](#assign-taxonomy) </br>
+7. [Phyloseq](#phyloseq) </br>
 
 This protocol is for paired-end demultiplexed miseq sequences that have sufficient overlap to merge R1 and R2, and are going to be run on your computer, not on Hydra. It is broken up into sections, each section an `.R` document that can be opened in RStudio. Once in RStudio, each command can be run using the `Run` button, or with `control + return`. The directions for each section are in that section file. You can download this entire pipeline, including the RStudio files using this link: [Metabarcoding Pipeline - RStudio Documents](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/archive/refs/heads/main.zip). I usually download a version of this pipeline for each run I analyse (in case any changes need to be made, and so the primer folder is in the correct place) and save it in the working directory of that run.
 
 However, before running RStudio, you must make sure the necessary programs are installed, and the illumina demultiplexed sequences have been downloaded.
 
-## 1 - Computer and RStudio Preparation {#Computer-and-RStudio-Preparation}
-### Install/Update Computer Programs {#Install/Update-Computer-Programs}
+## 1 - Computer and RStudio Preparation
+### Install/Update Computer Programs
 Make sure you have both R and RStudio already installed and updated on your computer. If you have an SI computer, you can load/update both through the Smithsonian's Self Service Application.
 
 #### Install miniconda
@@ -97,7 +97,7 @@ conda activate cutadapt
 ```
 cutadapt --version
 ```
-### Get Raw Reads {#Get-Raw-Reads}
+### Get Raw Reads
 Get raw reads. If you download them directly using BaseSpace Downloader, it creates a directory that will be your working directory for this pipeline.  Place this directory where you want to run the pipeline.  If you get reads already downloaded in a folder, then either place that folder wherever you want to run this pipeline, and use it as the working directory, or make a new run-specific directory to place these sequences. Below is an example for making a run-specific directory to place your sequences. I perform all my metabarcoding analyses directly in the BaseSpace-downloaded directory within a parent directory called "/Projects_Metabarcoding".
 
 DO NOT USE THIS COMMAND AS-IS, USE YOUR OWN PATH, INCLUDING YOUR USERNAME AND WHATEVER PROJECT NAME YOU WANT TO USE!
