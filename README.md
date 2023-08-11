@@ -18,8 +18,8 @@ This protocol is for paired-end demultiplexed miseq sequences that have sufficie
 
 However, before running RStudio, you must make sure the necessary programs are installed, and the illumina demultiplexed sequences have been downloaded.
 
-## 1 - Computer and RStudio Preparation
-### Install/Update Computer Programs
+## 1 - Computer and RStudio Preparation {#Computer-and-RStudio-Preparation}
+### Install/Update Computer Programs {#Install/Update-Computer-Programs}
 Make sure you have both R and RStudio already installed and updated on your computer. If you have an SI computer, you can load/update both through the Smithsonian's Self Service Application.
 
 #### Install miniconda
@@ -97,7 +97,7 @@ conda activate cutadapt
 ```
 cutadapt --version
 ```
-### Get Raw Reads
+### Get Raw Reads {#Get-Raw-Reads}
 Get raw reads. If you download them directly using BaseSpace Downloader, it creates a directory that will be your working directory for this pipeline.  Place this directory where you want to run the pipeline.  If you get reads already downloaded in a folder, then either place that folder wherever you want to run this pipeline, and use it as the working directory, or make a new run-specific directory to place these sequences. Below is an example for making a run-specific directory to place your sequences. I perform all my metabarcoding analyses directly in the BaseSpace-downloaded directory within a parent directory called "/Projects_Metabarcoding".
 
 DO NOT USE THIS COMMAND AS-IS, USE YOUR OWN PATH, INCLUDING YOUR USERNAME AND WHATEVER PROJECT NAME YOU WANT TO USE!
