@@ -36,13 +36,13 @@ list.files("data/results")
 
 # Import your sequence-table, preserving the first row as column header and the
 # first column as row header. All tables are saved as tab-delimited text files,
-# change "sep = '\X'" to your specific separator. We import as a matrix, as
+# change "sep = '\t'" to your specific separator. We import as a matrix, as
 # required by DADA2
 seqtab.project.miseqrun1 <- as.matrix(
   read.delim(
     "PROJECTNAME_MISEQRUN1_sequence-table.tsv",
-    header =TRUE,
-    sep = "\X",
+    header = TRUE,
+    sep = "\t",
     row.names = 1
     )
   )
