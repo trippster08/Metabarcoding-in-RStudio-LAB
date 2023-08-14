@@ -144,28 +144,45 @@ for (i in seq_along(sample.names)) {
 # your target gene directory. We will check to see if this happens, and if it
 # does, remove these off-target reads.
 
-# Check to see how many wrong-gene occurances there are for one gene. 
-list.files ("data/working/trimmed_sequences/18S", pattern="COI", full.names = TRUE)
+# Check to see how many wrong-gene occurances there are for one gene. Replace
+# "gene1" with your first gene name, and "gene2" with your second gene name
+# for all instances below.
+list.files ("data/working/trimmed_sequences/gene1", pattern="gene2", full.names = TRUE)
 # If you get anything other than "character(0)", save the names of the samples
-# with these micro-contaminations. I call it "gene1" instead of it's gene name
-# because R does not allow objects to start with a number, so an alternate name
-# is required for ribosomal genes (18S, 16S, 12S, etc).
-gene1.contam <- sort(list.files ("data/working/trimmed_sequences/18S", pattern="COI", full.names = TRUE))
+# with these micro-contaminations. Replace all instances of "gene1" and "gene2"
+# with your genes.
+
+# Make a list of all wrong-gene occurances for gene1 ()
+contam.gene1 <- sort(list.files ("data/working/trimmed_sequences/gene1", pattern="gene2"))
+contam.full.gene1 <- sort(list.files ("data/working/trimmed_sequences/gene1", pattern="gene2", full.names = TRUE))
 # Check your object to make sure the command worked
-head(gene1.contam)
+head(contam.gene1)
+file.size(contam.full.gene1)
+dir.create("data/working/contam_gene1", recursive=TRUE)
+
+file.copy(from = paste0("data/working/trimmed_sequences/gene1/", contam.gene1),
+            to = paste0("data/working/contam_gene1/", contam.gene1))
+file.remove(paste0("data/working/trimmed_sequences/gene1/", contam.gene1))
 # Check the file size of this object to get an estimate of the number of reads
 # each micro-contaminate has. If file sizes are < 10000, it contains less than
 # 20 reads (and file sizes below 50 are empty). If you have any files that are
 # signficantly larger, you may have contaminatino issues.
-file.size(gene1.contam)
+file.size(gene1.contam.gene1)
 # Remove these micro-contaminates
 file.remove(gene1.contam)
 # Check to make sure the removal worked. You should get "character(0)".
-list.files ("data/working/trimmed_sequences/18S", pattern="COI", full.names = TRUE)
+list.files ("data/working/trimmed_sequences/gene", pattern="COI", full.names = TRUE)
 # Repeat this process with your second gene. Make sure to reverse the path to
 # your trimmed reads, and "pattern=" arguments
-gene2.contam <- sort(list.files ("data/working/trimmed_sequences/COI", pattern="18S", full.names = TRUE))
-head(gene2.contam)
-file.size(gene2.contam)
-file.remove(gene2.contam)
-list.files ("data/working/trimmed_sequences/COI", pattern="18S", full.names = TRUE)
+
+contam.gene2 <- sort(list.files ("data/working/trimmed_sequences/gene2", pattern="gene1"))
+contam.full.gene2 <- sort(list.files ("data/working/trimmed_sequences/gene2", pattern="gene1", full.names = TRUE))
+head(contam.gene2)
+file.size(contam.full.gene2)
+dir.create("data/working/contam_gene2", recursive=TRUE)
+
+file.copy(from = paste0("data/working/trimmed_sequences/gene2/", contam.gene2),
+            to = paste0("data/working/contam_gene2/", contam.gene2))
+file.remove(paste0("data/working/trimmed_sequences/gene2/", contam.gene2))
+
+list.files ("data/working/trimmed_sequences/gene2", pattern="gene1", full.names = TRUE)
