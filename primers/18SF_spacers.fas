@@ -1,0 +1,18 @@
+# This is the fasta file called in Cutadapt to search for multiple Forward primers.
+  # Each primer sequence is preceded by an ^. This ^ indicates that the primer is 
+  # anchored, which means it is found at the 5' end of the sequence, and is
+  # required (i.e. the read will not be kept if the primer is not found).
+
+>iTru_18S_V4_F
+^CCAGCASCYGCGGTAATTCC
+>iTruA_18S_V4_F
+^GGTACCCAGCASCYGCGGTAATTCC
+>iTruB_18S_V4_F
+^cAACACCCAGCASCYGCGGTAATTCC
+>iTruC_18S_V4_F
+^atcGGTTCCAGCASCYGCGGTAATTCC
+>iTruD_18S_V4_F
+^tcgGTCAACCAGCASCYGCGGTAATTCC
+
+# These are the 18S forward metabarcoding primers, called either V4_18S.for or
+# TAReuk454FWD1, with spacers from the Travis Glenn lab.
