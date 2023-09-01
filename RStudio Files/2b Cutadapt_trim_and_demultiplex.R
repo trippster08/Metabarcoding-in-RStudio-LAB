@@ -72,10 +72,10 @@ head(sample.names)
 # only have one primer.
 
 # THE PATHS SHOWN BELOW ARE EXAMPLES ONLY. PLEASE CHANGE PATH TO YOUR PRIMER FILES.
-path.to.Fprimers <- "Metabarcoding-in-RStudio-LAB-multi-gene/primers/PRIMERF.fas"
-path.to.Rprimers <- "Metabarcoding-in-RStudio-LAB-multi-gene/primers/PRIMERR.fas"
-path.to.FprimersRC <- "Metabarcoding-in-RStudio-LAB-multi-gene/primers/PRIMERF_RC.fas"
-path.to.RprimersRC <- "Metabarcoding-in-RStudio-LAB-multi-gene/primers/PRIMERR_RC.fas"
+path.to.Fprimers <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERF.fas"
+path.to.Rprimers <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERR.fas"
+path.to.FprimersRC <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERF_RC.fas"
+path.to.RprimersRC <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERR_RC.fas"
 
 ## Run Cutadapt ================================================================
 
