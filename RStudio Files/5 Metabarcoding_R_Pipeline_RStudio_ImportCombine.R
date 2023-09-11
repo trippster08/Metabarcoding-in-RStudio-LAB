@@ -269,6 +269,4 @@ seqtab.project1 <- mergeSequenceTables(
   repeats = "sum",
   orderBy = "abundance")
 
-# Look at the first two rows and first five columns (or however many of each you
-# want to look at) to make sure it replaced them correctly
-seqtab.nochim.md5[1:2,1:5]
+
