@@ -123,7 +123,7 @@ for (i in seq_along(sample.names)) {
 # the 3' end as well as the 5' end. Cutadapt will only remove one primer from
 # a sample each time it's run.
 
-# -N 0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
+# --cores=0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
 # automatically detect the number of cores.
 
 # -g and -G are the paths to the 5' primers with spacers
