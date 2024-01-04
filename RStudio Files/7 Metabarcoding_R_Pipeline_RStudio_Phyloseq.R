@@ -156,7 +156,7 @@ alignment.dna <- AlignSeqs(
 )
 # Look at a brief "summary" of the alignment. This shows the alignment length,
 # the first 5 and last 5 ASVs and the first 50 and last 50 bps of the alignment.
-alingnment.dna
+alignment.dna
 
 # You can also look at the entire alignment in your browser.
 BrowseSeqs(alignment.dna)
