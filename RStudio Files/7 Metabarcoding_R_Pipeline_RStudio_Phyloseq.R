@@ -150,8 +150,12 @@ alignment.dna <- AlignSeqs(
   sequences.dna,
   guideTree = NULL,
   anchor = NA,
+  gapOpening = c(-15, -10),
+  gapExtension = c(-3, -2),
+  terminalGap = c(-15, -10),
   iterations = 2,
   refinements = 3,
+  processors = NULL,
   useStructures = FALSE
 )
 # Look at a brief "summary" of the alignment. This shows the alignment length,
