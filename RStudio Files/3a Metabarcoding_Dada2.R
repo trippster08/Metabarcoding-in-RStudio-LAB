@@ -386,9 +386,68 @@ track
 # "PROJECTNAME_MISEQRUN_sequence-table.tsv" to differentiate different runs.
 # In "5 Metabarcoding_R_Pipeline_RStudio_ImportCombine" we'll show how to
 # combine data from separate runs for analyses.
+
+# NOTE!!!
+# If you want to export a Sequence-Table with a md5 hash instead of ASV sequence
+# for each ASV, skip this and go to the next section.
 write.table(
   seqtab.nochim,
   file="data/results/PROJECTNAME_sequence-table.tsv",
+  quote = FALSE,
+  sep="\t",
+  row.names = TRUE,
+  col.names = NA
+)
+
+## Create And Use md5 Hash =====================================================
+# We first create a list of md5 hash's of all ASV's.
+
+# This makes a new vector containing all the ASV's (unique sequences) returned
+# by dada2. We are going to use this list to create md5 hashes. Use whatever
+#  table you will later use for your analyses (e.g. seqtab.nochim)
+repseq <- getSequences(seqtab.nochim)
+# We want to look at this list, to make sure you are getting the right thing
+head(repseq)
+
+# Use the program digest (in a For Loop) to create a new vector containing the
+# unique md5 hashes of the representative sequences (ASV's). This results in
+# identical feature names to those assigned in Qiime2.
+repseq.md5 <- c()
+for (i in seq_along(repseq)) {
+  repseq.md5[i] <- digest(
+    repseq[i], 
+    serialize=FALSE,
+    algo="md5"
+  )
+}
+# Examine the list of feature hashes
+head(repseq.md5)
+tail(repseq.md5)
+
+# Add md5 hash to the sequence-table from the DADA2 analysis. You may already
+# have this
+seqtab.nochim.md5 <- seqtab.nochim
+colnames(seqtab.nochim.md5) <- repseq.md5
+View(seqtab.nochimmd5)
+
+
+## Export Sequence-Table with md5 Hash =========================================
+# This exports a sequence-table: columns of ASV's (shown as a md5 hash instead
+# of sequence), rows of samples, and values = number of reads. This is the only
+# export you need for downstream analyses. You can do anything you want in this
+# pipeline with this table. This table can also be easily merged with other
+# tables from the same project but from different runs before downstream
+# analyses.
+
+# If you have mulitple Miseqruns for the same project that will need to be
+# combined for further analyses, you may want to name this file
+# "PROJECTNAME_MISEQRUN_sequence-table.tsv" to differentiate different runs.
+# In "5 Metabarcoding_R_Pipeline_RStudio_ImportCombine" we'll show how to
+# combine data from separate runs for analyses.
+
+write.table(
+  seqtab.nochim.md5,
+  file="data/results/PROJECTNAME_sequence-table_md5.tsv",
   quote = FALSE,
   sep="\t",
   row.names = TRUE,
