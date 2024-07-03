@@ -388,6 +388,15 @@ track
 # combine data from separate runs for analyses.
 
 # NOTE!!!
+# The Sequence-Table in this format is very unwieldy, since each column name is
+# an entire ASV. Instead, we can convert each ASV into a short "hash" using
+# the md5 encryption model, creating a 32bit representative of each ASV. Each
+# hash is essentially unique to the ASV it is representing. We would then
+# replace the ASVs in the column headings with their representative md5 hash.
+# However, having an ASV hash as a column heading requires the creation of a
+# Representative Sequence list, which tells us which hash goes with which ASV.
+# gives the user a representative-sequence fasta that contains the ASV, labelled
+# with its specfic md5 hash.
 # If you want to export a Sequence-Table with a md5 hash instead of ASV sequence
 # for each ASV, skip this and go to the next section.
 write.table(
@@ -422,28 +431,24 @@ for (i in seq_along(repseq)) {
 }
 # Examine the list of feature hashes
 head(repseq.md5)
-tail(repseq.md5)
 
-# Add md5 hash to the sequence-table from the DADA2 analysis. You may already
-# have this
+
+# Add md5 hash to the sequence-table from the DADA2 analysis. 
 seqtab.nochim.md5 <- seqtab.nochim
 colnames(seqtab.nochim.md5) <- repseq.md5
-View(seqtab.nochimmd5)
+View(seqtab.nochim.md5)
 
+# Create an md5/ASV table, with each row as an ASV and it's representative md5
+# hash.
+repseq.md5.asv <- tibble(repseq.md5, repseq) %>%
+rename(., md5=repseq.md5, ASV=repseq)
+
+head(repseq.md5.asv)
 
 ## Export Sequence-Table with md5 Hash =========================================
 # This exports a sequence-table: columns of ASV's (shown as a md5 hash instead
-# of sequence), rows of samples, and values = number of reads. This is the only
-# export you need for downstream analyses. You can do anything you want in this
-# pipeline with this table. This table can also be easily merged with other
-# tables from the same project but from different runs before downstream
-# analyses.
-
-# If you have mulitple Miseqruns for the same project that will need to be
-# combined for further analyses, you may want to name this file
-# "PROJECTNAME_MISEQRUN_sequence-table.tsv" to differentiate different runs.
-# In "5 Metabarcoding_R_Pipeline_RStudio_ImportCombine" we'll show how to
-# combine data from separate runs for analyses.
+# of sequence), rows of samples, and values = number of reads. With this table
+# you will also need a file that relates each ASV to it's representative md5 hash. We download this in the next section.
 
 write.table(
   seqtab.nochim.md5,
@@ -452,4 +457,28 @@ write.table(
   sep="\t",
   row.names = TRUE,
   col.names = NA
+)
+
+## Export Representative Sequences table/fasta =================================
+# Here we export our our representative sequences, either as a fasta (with the
+# md5 hash as the ASV name), or as a table with ASV and md5 hash as columns.
+
+# This exports all the ASVs in fasta format, with ASV hash as the sequence
+# name. This is analogous to the representative sequence output in Qiime2.
+write.fasta(
+  sequences = as.list(repseq.md5.asv$ASV), 
+  names = repseq.md5.asv$md5,
+  open = "w",
+  as.string = FALSE,
+  file.out = "data/results/PROJECTNAME_rep-seq.fas"
+)
+
+# This exports all the ASVs and their respective md5 hashes as a two-column
+# table.
+write.table(
+  repseq.md5.asv,
+  file="data/results/PROJECTNAME_representative_sequence_table_md5.tsv",
+  quote = FALSE,
+  sep="\t",
+  row.names = FALSE
 )
