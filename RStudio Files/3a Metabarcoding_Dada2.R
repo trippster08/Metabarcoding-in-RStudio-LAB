@@ -440,8 +440,9 @@ View(seqtab.nochim.md5)
 
 # Create an md5/ASV table, with each row as an ASV and it's representative md5
 # hash.
-repseq.md5.asv <- tibble(repseq.md5, repseq) %>%
-rename(., md5=repseq.md5, ASV=repseq)
+repseq.md5.asv <- tibble(repseq.md5, repseq) 
+# Rename column headings
+colnames(repseq.md5.asv) <- c("md5", "ASV")
 
 head(repseq.md5.asv)
 
