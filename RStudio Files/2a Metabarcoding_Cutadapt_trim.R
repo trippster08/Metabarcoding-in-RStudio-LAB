@@ -104,7 +104,7 @@ for (i in seq_along(sample.names)) {
 }
 
 # We are including our default parameters for cutadapt. You can change these
-# parameters if you have prefer others. 
+# parameters if you have prefer others.
 
 # -e 0.2 allows an error rate of 0.2 (20% of primer basepairs can me wrong)
 
@@ -123,8 +123,8 @@ for (i in seq_along(sample.names)) {
 # the 3' end as well as the 5' end. Cutadapt will only remove one primer from
 # a sample each time it's run.
 
-# --cores=0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
-# automatically detect the number of cores.
+# --cores=0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt
+# to automatically detect the number of cores.
 
 # -g and -G are the paths to the 5' primers with spacers
 # -a and -A are the paths to the 3' RC primers. If you are certain there is no
