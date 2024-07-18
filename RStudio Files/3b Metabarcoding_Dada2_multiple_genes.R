@@ -399,7 +399,95 @@ write.table(
   row.names = TRUE,
   col.names = NA
 )
+# NOTE!!!
+# The Sequence-Table in this format is very unwieldy, since each column name is
+# an entire ASV. Instead, we can convert each ASV into a short "hash" using
+# the md5 encryption model, creating a 32bit representative of each ASV. Each
+# hash is essentially unique to the ASV it is representing. We would then
+# replace the ASVs in the column headings with their representative md5 hash.
+# However, having an ASV hash as a column heading requires the creation of a
+# Representative Sequence list, which tells us which hash goes with which ASV.
+# gives the user a representative-sequence fasta that contains the ASV, labelled
+# with its specfic md5 hash.
+# If you want to export a Sequence-Table with a md5 hash instead of ASV sequence
+# for each ASV, skip this and go to the next section.
 
+## Create And Use md5 Hash =====================================================
+# To create a Sequence list with md5 hash instead of ASVs, we first need to
+# create a list of md5 hash's of all ASV's.
+
+# This makes a new vector containing all the ASV's (unique sequences) returned
+# by dada2. We are going to use this list to create md5 hashes. Use whatever
+#  table you will later use for your analyses (e.g. seqtab.nochim)
+repseq.gene1 <- getSequences(seqtab.nochim.gene1)
+# We want to look at this list, to make sure you are getting the right thing
+head(repseq.gene1)
+
+# Use the program digest (in a For Loop) to create a new vector containing the
+# unique md5 hashes of the representative sequences (ASV's). This results in
+# identical feature names to those assigned in Qiime2.
+repseq.md5.gene1 <- c()
+for (i in seq_along(repseq.gene1)) {
+  repseq.md5.gene1[i] <- digest(
+    repseq.gene1[i], 
+    serialize=FALSE,
+    algo="md5"
+  )
+}
+# Examine the list of feature hashes
+head(repseq.md5.gene1)
+
+
+# Add md5 hash to the sequence-table from the DADA2 analysis. 
+seqtab.nochim.md5.gene1 <- seqtab.nochim.gene1
+colnames(seqtab.nochim.md5.gene1) <- repseq.md5.gene1
+View(seqtab.nochim.md5.gene1)
+
+# Create an md5/ASV table, with each row as an ASV and it's representative md5
+# hash.
+repseq.md5.asv.gene1 <- tibble(repseq.md5.gene1, repseq.gene1) 
+# Rename column headings
+colnames(repseq.md5.asv.gene1) <- c("md5", "ASV")
+
+head(repseq.md5.asv.gene1)
+
+## Export Sequence-Table with md5 Hash =========================================
+# This exports a sequence-table: columns of ASV's (shown as a md5 hash instead
+# of sequence), rows of samples, and values = number of reads. With this table
+# you will also need a file that relates each ASV to it's representative md5 hash. We download this in the next section.
+
+write.table(
+  seqtab.nochim.md5.gene1,
+  file="data/results/PROJECTNAME_gene1_sequence-table_md5.tsv",
+  quote = FALSE,
+  sep="\t",
+  row.names = TRUE,
+  col.names = NA
+)
+
+## Export Representative Sequences table/fasta =================================
+# Here we export our our representative sequences, either as a fasta (with the
+# md5 hash as the ASV name), or as a table with ASV and md5 hash as columns.
+
+# This exports all the ASVs in fasta format, with ASV hash as the sequence
+# name. This is analogous to the representative sequence output in Qiime2.
+write.fasta(
+  sequences = as.list(repseq.md5.asv.gene1$ASV), 
+  names = repseq.md5.asv.gene1$md5,
+  open = "w",
+  as.string = FALSE,
+  file.out = "data/results/PROJECTNAME_gene1_rep-seq.fas"
+)
+
+# This exports all the ASVs and their respective md5 hashes as a two-column
+# table.
+write.table(
+  repseq.md5.asv.gene1,
+  file="data/results/PROJECTNAME_gene1_representative_sequence_table_md5.tsv",
+  quote = FALSE,
+  sep="\t",
+  row.names = FALSE
+)
 
 ## Gene2 =======================================================================
 # This creates two vectors. One contains the names for forward reads (R1, called
@@ -763,4 +851,93 @@ write.table(
   sep="\t",
   row.names = TRUE,
   col.names = NA
+)
+# NOTE!!!
+# The Sequence-Table in this format is very unwieldy, since each column name is
+# an entire ASV. Instead, we can convert each ASV into a short "hash" using
+# the md5 encryption model, creating a 32bit representative of each ASV. Each
+# hash is essentially unique to the ASV it is representing. We would then
+# replace the ASVs in the column headings with their representative md5 hash.
+# However, having an ASV hash as a column heading requires the creation of a
+# Representative Sequence list, which tells us which hash goes with which ASV.
+# gives the user a representative-sequence fasta that contains the ASV, labelled
+# with its specfic md5 hash.
+# If you want to export a Sequence-Table with a md5 hash instead of ASV sequence
+# for each ASV, skip this and go to the next section.
+
+## Create And Use md5 Hash =====================================================
+# To create a Sequence list with md5 hash instead of ASVs, we first need to
+# create a list of md5 hash's of all ASV's.
+
+# This makes a new vector containing all the ASV's (unique sequences) returned
+# by dada2. We are going to use this list to create md5 hashes. Use whatever
+#  table you will later use for your analyses (e.g. seqtab.nochim)
+repseq.gene2 <- getSequences(seqtab.nochim.gene2)
+# We want to look at this list, to make sure you are getting the right thing
+head(repseq.gene2)
+
+# Use the program digest (in a For Loop) to create a new vector containing the
+# unique md5 hashes of the representative sequences (ASV's). This results in
+# identical feature names to those assigned in Qiime2.
+repseq.md5.gene2 <- c()
+for (i in seq_along(repseq.gene2)) {
+  repseq.md5.gene2[i] <- digest(
+    repseq.gene2[i], 
+    serialize=FALSE,
+    algo="md5"
+  )
+}
+# Examine the list of feature hashes
+head(repseq.md5.gene2)
+
+
+# Add md5 hash to the sequence-table from the DADA2 analysis. 
+seqtab.nochim.md5.gene2 <- seqtab.nochim.gene2
+colnames(seqtab.nochim.md5.gene2) <- repseq.md5.gene2
+View(seqtab.nochim.md5.gene2)
+
+# Create an md5/ASV table, with each row as an ASV and it's representative md5
+# hash.
+repseq.md5.asv.gene2 <- tibble(repseq.md5.gene2, repseq.gene2) 
+# Rename column headings
+colnames(repseq.md5.asv.gene2) <- c("md5", "ASV")
+
+head(repseq.md5.asv.gene2)
+
+## Export Sequence-Table with md5 Hash =========================================
+# This exports a sequence-table: columns of ASV's (shown as a md5 hash instead
+# of sequence), rows of samples, and values = number of reads. With this table
+# you will also need a file that relates each ASV to it's representative md5 hash. We download this in the next section.
+
+write.table(
+  seqtab.nochim.md5.gene2,
+  file="data/results/PROJECTNAME_gene2_sequence-table_md5.tsv",
+  quote = FALSE,
+  sep="\t",
+  row.names = TRUE,
+  col.names = NA
+)
+
+## Export Representative Sequences table/fasta =================================
+# Here we export our our representative sequences, either as a fasta (with the
+# md5 hash as the ASV name), or as a table with ASV and md5 hash as columns.
+
+# This exports all the ASVs in fasta format, with ASV hash as the sequence
+# name. This is analogous to the representative sequence output in Qiime2.
+write.fasta(
+  sequences = as.list(repseq.md5.asv.gene2$ASV), 
+  names = repseq.md5.asv.gene2$md5,
+  open = "w",
+  as.string = FALSE,
+  file.out = "data/results/PROJECTNAME_gene2_rep-seq.fas"
+)
+
+# This exports all the ASVs and their respective md5 hashes as a two-column
+# table.
+write.table(
+  repseq.md5.asv.gene2,
+  file="data/results/PROJECTNAME_gene2_representative_sequence_table_md5.tsv",
+  quote = FALSE,
+  sep="\t",
+  row.names = FALSE
 )
