@@ -3,7 +3,8 @@
 # estimates to denoise reads, merge paired reads, and remove chimeric sequences
 
 ## Load Libraries ==============================================================
-# Load all R packages you may need if not coming directly from the previous step. 
+# Load all R packages you may need if not coming directly from the previous
+# step. 
 library(dada2)
 library(digest)
 library(phyloseq)
@@ -31,8 +32,8 @@ list.files(path)
 
 # This creates two vectors. One contains the names for forward reads (R1, called
 # fnFs) and the other for reverse reads (R2, called fnRs).
-fnFs <- sort(list.files(path, pattern="_R1.fastq.gz", full.names = TRUE))
-fnRs <- sort(list.files(path, pattern="_R2.fastq.gz", full.names = TRUE))
+fnFs <- sort(list.files(path, pattern = "_R1.fastq.gz", full.names = TRUE))
+fnRs <- sort(list.files(path, pattern = "_R2.fastq.gz", full.names = TRUE))
 
 # Make sure you have the correct number of samples, and that they match the
 # number of sample names in the list you made previously.
@@ -99,7 +100,7 @@ qualplotF
 # shown.  We use "breaks=seq(a,b,c)", to indicate the first axis tick "a", last
 # tick "b", and frequency of ticks "c". The example shown results in a plot that
 # starts at 190 bp, ends at 220 bp, and has axis ticks every 2 bp.
-qualplotF + scale_x_continuous(limits=c(190,220), breaks=seq(190,220,2))
+qualplotF + scale_x_continuous(limits = c(190, 220), breaks = seq(190, 220, 2))
 
 # I also typically look at all (or most of) the individual quality plots, to see
 # if there are any troublesome samples. Negative controls often have poor
@@ -116,7 +117,7 @@ qualplotR <- plotQualityProfile(
   aggregate = TRUE
 )
 qualplotR
-qualplotR + scale_x_continuous(limits=c(150,200), breaks=seq(150,200,2))
+qualplotR + scale_x_continuous(limits = c(150, 200), breaks = seq(150, 200, 2))
 
 plotQualityProfile(
   fnRs[1:N],
@@ -124,7 +125,7 @@ plotQualityProfile(
 )
 
 # This creates files for the reads that will be quality filtered with dada2
-  # in the next step.  
+# in the next step.
 filtFs <- file.path(path, "filtered", paste0(sample.names, "_F_filt.fastq.gz"))
 filtRs <- file.path(path, "filtered", paste0(sample.names, "_R_filt.fastq.gz"))
 
@@ -163,13 +164,13 @@ out <- filterAndTrim(
   filtFs,
   fnRs,
   filtRs,
-  truncLen=c(0,0),
-  maxN=0,
-  maxEE=c(4,4),
-  rm.phix=TRUE,
-  truncQ=2,
-  compress=TRUE,
-  multithread=TRUE
+  truncLen = c(0, 0),
+  maxN = 0,
+  maxEE = c(4, 4),
+  rm.phix = TRUE,
+  truncQ = 2,
+  compress = TRUE,
+  multithread = TRUE
 )
 
 # Usually we don't have that many samples, so I just look at "out" in its
@@ -219,7 +220,7 @@ errF <- learnErrors(
 )
 
 errR <- learnErrors(
-  filtRs, 
+  filtRs,
   nbases = 1e+08,
   errorEstimationFunction = loessErrfun,
   multithread = TRUE,
@@ -238,16 +239,16 @@ errR <- learnErrors(
 # to look at here are to make sure that each black line is a good fit to the
 # observed error rates, and that estimated error rates decrease with increased
 # quality.
-plotErrors(errF, nominalQ=TRUE)
-plotErrors(errR, nominalQ=TRUE)
+plotErrors(errF, nominalQ = TRUE)
+plotErrors(errR, nominalQ = TRUE)
 
 # This applies the "core sample inference algorithm" (i.e. denoising) in dada2
 # to get corrected unique sequences. The two main inputs are the first, which is
 # the filtered sequences (filtFs), and "err =" which is the error file from
 # learnErrors (effF).
 dadaFs <- dada(
-  filtFs, 
-  err = errF, 
+  filtFs,
+  err = errF,
   errorEstimationFunction = loessErrfun,
   selfConsist = FALSE,
   pool = FALSE,
@@ -256,8 +257,8 @@ dadaFs <- dada(
 )
 
 dadaRs <- dada(
-  filtRs, 
-  err=errR, 
+  filtRs,
+  err = errR,
   errorEstimationFunction = loessErrfun,
   selfConsist = FALSE,
   pool = FALSE,
@@ -286,13 +287,13 @@ dadaRs[[1]]
 # also contains multiple columns describing data for each unique merged
 # sequence.
 merged <- mergePairs(
-  dadaFs, 
-  filtFs, 
-  dadaRs, 
-  filtRs, 
+  dadaFs,
+  filtFs,
+  dadaRs,
+  filtRs,
   minOverlap = 12,
   maxMismatch = 0,
-  verbose=TRUE
+  verbose = TRUE
 )
 
 # Inspect the merged sequences from the data.frame of the first sample (and the
@@ -326,7 +327,7 @@ table(nchar(getSequences(seqtab)))
 # I tend not to remove any ASV's at this point
 
 # In this example, we only keep reads between 298 and 322 bp in length.
-seqtab313 <- seqtab[,nchar(colnames(seqtab)) %in% 298:322]
+seqtab313 <- seqtab[, nchar(colnames(seqtab)) %in% 298:322]
 dim(seqtab313)
 table(nchar(getSequences(seqtab313)))
 
@@ -336,9 +337,9 @@ table(nchar(getSequences(seqtab313)))
 # sequences above.
 seqtab.nochim <- removeBimeraDenovo(
   seqtab,
-  method="consensus",
-  multithread=TRUE,
-  verbose=TRUE
+  method = "consensus",
+  multithread = TRUE,
+  verbose = TRUE
 )
 # We look at the dimensions of the new sequence-table
 dim(seqtab.nochim)
@@ -354,11 +355,11 @@ dim(seqtab.nochim)
 getN <- function(x) sum(getUniques(x))
 track <- cbind(
   out, 
-  sapply(dadaFs, getN), 
-  sapply(dadaRs, getN), 
-  sapply(merged, getN), 
-  rowSums(seqtab.nochim), 
-  100*(rowSums(seqtab.nochim) / out[,1]))
+  sapply(dadaFs, getN),
+  sapply(dadaRs, getN),
+  sapply(merged, getN),
+  rowSums(seqtab.nochim),
+  100 * (rowSums(seqtab.nochim) / out[, 1]))
 
 # If processing a single sample, remove the sapply calls: e.g. replace
 # sapply(dadaFs, getN) with getN(dadaFs)
@@ -387,6 +388,14 @@ track
 # In "5 Metabarcoding_R_Pipeline_RStudio_ImportCombine" we'll show how to
 # combine data from separate runs for analyses.
 
+write.table(
+  seqtab.nochim,
+  file = "data/results/PROJECTNAME_sequence-table.tsv",
+  quote = FALSE,
+  sep = "\t",
+  row.names = TRUE,
+  col.names = NA
+)
 # NOTE!!!
 # The Sequence-Table in this format is very unwieldy, since each column name is
 # an entire ASV. Instead, we can convert each ASV into a short "hash" using
@@ -399,17 +408,10 @@ track
 # with its specfic md5 hash.
 # If you want to export a Sequence-Table with a md5 hash instead of ASV sequence
 # for each ASV, skip this and go to the next section.
-write.table(
-  seqtab.nochim,
-  file="data/results/PROJECTNAME_sequence-table.tsv",
-  quote = FALSE,
-  sep="\t",
-  row.names = TRUE,
-  col.names = NA
-)
 
 ## Create And Use md5 Hash =====================================================
-# We first create a list of md5 hash's of all ASV's.
+# To create a Sequence list with md5 hash instead of ASVs, we first need to
+# create a list of md5 hash's of all ASV's.
 
 # This makes a new vector containing all the ASV's (unique sequences) returned
 # by dada2. We are going to use this list to create md5 hashes. Use whatever
@@ -424,23 +426,23 @@ head(repseq)
 repseq.md5 <- c()
 for (i in seq_along(repseq)) {
   repseq.md5[i] <- digest(
-    repseq[i], 
-    serialize=FALSE,
-    algo="md5"
+    repseq[i],
+    serialize = FALSE,
+    algo = "md5"
   )
 }
 # Examine the list of feature hashes
 head(repseq.md5)
 
 
-# Add md5 hash to the sequence-table from the DADA2 analysis. 
+# Add md5 hash to the sequence-table from the DADA2 analysis.
 seqtab.nochim.md5 <- seqtab.nochim
 colnames(seqtab.nochim.md5) <- repseq.md5
 View(seqtab.nochim.md5)
 
 # Create an md5/ASV table, with each row as an ASV and it's representative md5
 # hash.
-repseq.md5.asv <- tibble(repseq.md5, repseq) 
+repseq.md5.asv <- tibble(repseq.md5, repseq)
 # Rename column headings
 colnames(repseq.md5.asv) <- c("md5", "ASV")
 
@@ -453,9 +455,9 @@ head(repseq.md5.asv)
 
 write.table(
   seqtab.nochim.md5,
-  file="data/results/PROJECTNAME_sequence-table_md5.tsv",
+  file = "data/results/PROJECTNAME_sequence-table_md5.tsv",
   quote = FALSE,
-  sep="\t",
+  sep = "\t",
   row.names = TRUE,
   col.names = NA
 )
@@ -478,8 +480,8 @@ write.fasta(
 # table.
 write.table(
   repseq.md5.asv,
-  file="data/results/PROJECTNAME_representative_sequence_table_md5.tsv",
+  file = "data/results/PROJECTNAME_representative_sequence_table_md5.tsv",
   quote = FALSE,
-  sep="\t",
+  sep = "\t",
   row.names = FALSE
 )
