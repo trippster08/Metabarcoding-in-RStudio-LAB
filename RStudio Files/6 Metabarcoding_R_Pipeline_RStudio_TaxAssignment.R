@@ -100,7 +100,7 @@ unique(taxonomy$tax[,"Family"])
 taxonomy.tax.tb <- as_tibble(
   taxonomy$tax, 
   rownames = "ASV"
-  ) 
+) 
 dim(taxonomy.tax.tb)
 
 taxonomy.boot.tb <- as_tibble(
@@ -134,7 +134,7 @@ View(taxonomy.tb.md5)
 
 # Rearrange columns so that the md5 hash comes first, then the ASV, then each
 # classfication level followed by it's respective bootstrap column.
-taxonomy.tb.md5 <- taxonomy.tb.md5[ ,c(16,1,2,9,3,10,4,11,5,12,6,13,7,14,8,15)]
+taxonomy.tb.md5 <- taxonomy.tb.md5[ , c(16,1,2,9,3,10,4,11,5,12,6,13,7,14,8,15)]
 View(taxonomy.tb.md5)
 
 # Export this table as a .tsv file. I name it with Project Name,

@@ -44,8 +44,8 @@ seqtab.project.miseqrun1 <- as.matrix(
     header = TRUE,
     sep = "\t",
     row.names = 1
-    )
   )
+)
 
 # Look at your newly imported miseqrun1 sequence-table for project1.
 View(seqtab.project.miseqrun1)
@@ -65,7 +65,7 @@ feattab.md5.project.miseqrun2 <- read.delim(
   header = TRUE,
   sep = "\t",
   skip = 1
-  )
+)
 
 # Import the representative-sequence .fasta, and convert it into a table so it
 # can be merged with the feature table. enframe() converts a named vector (in
@@ -74,14 +74,14 @@ feattab.md5.project.miseqrun2 <- read.delim(
 # repseq.project1.miseqrun2)
 repseq.project.miseqrun2 <- getSequences(
   "PROJECTNAME_miseqrun2_rep-seqs-dada2.fasta"
-  ) %>%
-  enframe (name = "feature", value = "ASV")
+) %>%
+  enframe(name = "feature", value = "ASV")
 
 # Combine the representative-sequences table with the md5 feature-table.
 feattab.repseq.project1.miseqrun2 <- cbind(
   repseq.project1.miseqrun2,
   feattab.md5.project1.miseqrun2
-  )
+)
 
 # Compare the two columns of md5 hash's to make sure they agree (ensure that
 # both tables have the same ASV's in the same order). Check to make sure of the
@@ -89,10 +89,10 @@ feattab.repseq.project1.miseqrun2 <- cbind(
 # other than "X.OTU.ID", change this in the command below.
 feattab.repseq.project1.miseqrun2$md5.agree <- ifelse(
   feattab.repseq.project1.miseqrun2$X.OTU.ID==feattab.repseq.project1.miseqrun2$Feature, "Yes",
-      ifelse(
-        feattab.repseq.project1.miseqrun2$X.OTU.ID!=feattab.repseq.project1.miseqrun2$Feature, "No"
-      )
+  ifelse(
+    feattab.repseq.project1.miseqrun2$X.OTU.ID!=feattab.repseq.project1.miseqrun2$Feature, "No"
   )
+)
 
 # This counts "yes" and "no" in the column md5.agree. Hopefully there will be
 # only "yes". If any "no" occurs, you will have to rearrange your tables before
@@ -102,21 +102,22 @@ table(feattab.repseq.project1.miseqrun2$md5.agree)
 
 # Prune this table to make the feature-table with ASV's instead of md5 hashes
 feattab.project1.miseqrun2 <- feattab.repseq.project1.miseqrun2[
-  ,-c(1,3,length(feattab.repseq.project1.miseqrun2)-0)
-  ]
+  ,
+  -c(1, 3, length(feattab.repseq.project1.miseqrun2) - 0)
+]
 
 # Transpose this feature-table into a sequence table, and convert the first
 # columns/rows into headings.
 seqtab.project1.miseqrun2 <- transpose(
   feattab.project1.miseqrun2,
   keep.names = "Sample",
-  make.names=1)
+  make.names = 1)
 
 # Convert the first column into rownames to match the format of the DADA2 output
-row.names(sectab.project1.miseqrun2) <- sectab.project1.miseqrun2[,1]
+row.names(sectab.project1.miseqrun2) <- sectab.project1.miseqrun2[, 1]
 
 # Remove the 1st column, which is now a duplicate of the row names
-seqtab.project1.miseqrun2 <- sectab.project1.miseqrun2[,-1]
+seqtab.project1.miseqrun2 <- sectab.project1.miseqrun2[, -1]
 
 # Finally, convert the data.frame into a matrix, as required by DADA2
 seqtab.project1.miseqrun2 <- as.matrix(seqtab.project1.miseqrun2)
@@ -141,7 +142,7 @@ feattab.md5.project1.miseqrun2 <- as(biom_data(feattab.md5.project1.miseqrun2.bi
 feattab.md5.project1.miseqrun2 <- as_tibble(
   feattab.md5.project1.miseqrun2,
   rownames = "Feature2"
-  )
+)
 
 # Import the representative-sequence .fasta, and convert it into a table so it
 # can be merged with the feature table. enframe() converts a named vector (in
@@ -150,7 +151,7 @@ feattab.md5.project1.miseqrun2 <- as_tibble(
 # repseq.project1.miseqrun2)
 repseq.project1.miseqrun2 <- getSequences(
   "project1_miseqrun2_rep-seqs-dada2.fasta") %>%
-  enframe (name = "Feature", value = "ASV")
+  enframe(name = "Feature", value = "ASV")
 
 # Combine the representative-sequences table with the md5 feature-table.
 feattab.repseq.project1.miseqrun2 <- cbind(
@@ -177,7 +178,8 @@ table(feattab.repseq.project1.miseqrun2$md5.agree)
 
 # Prune this table to make the feature-table with ASV's instead of md5 hashes.
 feattab.project1.miseqrun2 <- feattab.repseq.project1.miseqrun2[
-  ,-c(1,3,length(feattab.repseq.project1.miseqrun2)-0)
+  ,
+  -c(1, 3, length(feattab.repseq.project1.miseqrun2) - 0)
 ]
 
 # Transpose this feature-table into a sequence table, and convert the first
@@ -185,13 +187,13 @@ feattab.project1.miseqrun2 <- feattab.repseq.project1.miseqrun2[
 seqtab.project1.miseqrun2 <- transpose(
   feattab.project1.miseqrun2,
   keep.names = "Sample",
-  make.names=1)
+  make.names = 1)
 
 # Convert the first column into rownames to match the format of the DADA2 output
-row.names(seqtab.project1.miseqrun2) <- seqtab.project1.miseqrun2[,1]
+row.names(seqtab.project1.miseqrun2) <- seqtab.project1.miseqrun2[, 1]
 
 # Remove the 1st column, which is now a duplicate of the row names
-seqtab.project1.miseqrun2 <- seqtab.project1.miseqrun2[,-1]
+seqtab.project1.miseqrun2 <- seqtab.project1.miseqrun2[, -1]
 
 # Finally, convert the data.frame into a matrix, as required by DADA2
 seqtab.project1.miseqrun2 <- as.matrix(seqtab.project1.miseqrun2)
@@ -212,7 +214,7 @@ seqlisttab.project1.miseqrun1 <- read.delim(
   "project1_miseqrun1_SeqList_Tall.tsv",
   header = TRUE,
   sep = "\t"
-  )
+)
 
 # !!!!!OPTIONAL!!!!!
 # If your sequence-list-table has a column of md5 hashes, you may want to remove
@@ -223,7 +225,7 @@ seqlisttab.project1.miseqrun1 <- read.delim(
 seqlisttab.project1.miseqrun1 <- subset(
   seqlisttab.project1.miseqrun1,
   select = -feature
-  )
+)
 # !!!!!OPTIONAL!!!!!
 
 # Convert this tall (and tidy) table into a wide table, in form like a
@@ -234,20 +236,21 @@ feattab.project1.miseqrun1.wide <- pivot_wider(
   names_from = sample,
   values_from = count,
   values_fill = 0
-  )
+)
 
 # Transpose this feature-table into a sequence table, and convert the first
 # column/row into headings.
 seqtab.project1.miseqrun1 <- transpose(
   feattab.project1.miseqrun1.wide,
   keep.names = "Sample",
-  make.names=1)
+  make.names = 1
+)
 
 # Convert the first column into rownames to match the format of the DADA2 output
-row.names(seqtab.project1.miseqrun1) <- seqtab.project1.miseqrun1[,1]
+row.names(seqtab.project1.miseqrun1) <- seqtab.project1.miseqrun1[, 1]
 
 # Remove the 1st column, which is now a duplicate of the row names
-seqtab.project1.miseqrun1 <- seqtab.project1.miseqrun1[,-1]
+seqtab.project1.miseqrun1 <- seqtab.project1.miseqrun1[, -1]
 
 # Finally, convert the data.frame into a matrix, as required by DADA2
 seqtab.project1.miseqrun1 <- as.matrix(seqtab.project1.miseqrun1)
@@ -267,6 +270,5 @@ seqtab.project1 <- mergeSequenceTables(
   seqtab.project1.miseqrun1,
   seqtab.project1.miseqrun2,
   repeats = "sum",
-  orderBy = "abundance")
-
-
+  orderBy = "abundance"
+)
