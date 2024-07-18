@@ -33,12 +33,18 @@ setwd("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME"
 # From the dada2 manual: "assignTaxonomy(...) expects a training fasta file (or
 # compressed fasta file) in which the taxonomy corresponding to each sequence is
 # encoded in the id line in the following fashion (the second sequence is not
-# assigned down to level 6):
+# assigned down to level 6)." Note that all levels above the lowest level must
+# have a space, even if there is no name for that level (I've added a third
+# example to demonstrate).
 #>Level1;Level2;Level3;Level4;Level5;Level6;
 #ACCTAGAAAGTCGTAGATCGAAGTTGAAGCATCGCCCGATGATCGTCTGAAGCTGTAGCATGAGTCGATTTTCACATTCAGGGATACCATAGGATAC
 #>Level1;Level2;Level3;Level4;Level5;
 #CGCTAGAAAGTCGTAGAAGGCTCGGAGGTTTGAAGCATCGCCCGATGGGATCTCGTTGCTGTAGCATGAGTACGGACATTCAGGGATCATAGGATAC"
+#>Level1;Level2;;Level4;Level5;Level6
+#CGCTAGAAAGTCGTAGAAGGCTCGGAGGTTTGAAGCATCGCCCGATGGGATCTCGTTGCTGTAGCATGAGTACGGACATTCAGGGATCATAGGATAC"
 
+# taxLevels defines what taxonomic rank each of the levels shown in the above
+# example represents.
 
 taxonomy <- assignTaxonomy(
   seqtab.nochim,
