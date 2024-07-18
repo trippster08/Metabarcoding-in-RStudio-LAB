@@ -172,7 +172,7 @@ colnames(seqtab.nochim.transpose.md5)
 # name. This is analogous to the representative sequence output in Qiime2.
 # Change file.out to wherever you want to save your files from this analysis.
 write.fasta(
-  sequences = as.list(repseq), 
+  sequences = as.list(repseq),
   names = repseq.md5,
   open = "w",
   as.string = FALSE,
@@ -185,9 +185,9 @@ write.fasta(
 # table, remove bracketed area after seqtab.nochim.transpose.md5.
 write.table(
   seqtab.nochim.transpose.md5[,c(1, 3:length(seqtab.nochim.transpose.md5))],
-  file="data/results/PROJECTNAME_feature-table.tsv",
+  file = "data/results/PROJECTNAME_feature-table.tsv",
   quote = FALSE,
-  sep="\t",
+  sep = "\t",
   row.names = FALSE
 )
 
@@ -212,9 +212,9 @@ head(repseq.tall)
 repseq.tall.md5 <- c()
 for (i in seq_along(repseq.tall)) {
   repseq.tall.md5[i] <- digest(
-    repseq.tall[i], 
-    serialize=FALSE,
-    algo="md5"
+    repseq.tall[i],
+    serialize = FALSE,
+    algo = "md5"
   )
 }
 # Examine hashed sequences to make sure conversion worked
@@ -226,7 +226,7 @@ head(repseq.tall.md5)
 seqtab.nochim.tall.nozero.md5 <- cbind(
   seqtab.nochim.tall.nozero,
   feature = repseq.tall.md5
-  )
+)
 # Check to make sure new table contains "feature" column
 colnames(seqtab.nochim.tall.nozero.md5)
 
@@ -239,10 +239,10 @@ seqtab.nochim.tall.nozero.md5.name <- unite(
   c(sample, feature, count),
   sep = "_",
   remove = FALSE
-  )
+)
 # Check to make sure the new names are correct, for at least the first 4 rows.
 # And check column headings if you like.
-head(seqtab.nochim.tall.nozero.md5.name)[1:4,1]
+head(seqtab.nochim.tall.nozero.md5.name)[1:4, 1]
 colnames(seqtab.nochim.tall.nozero.md5.name)
 
 # Reorder columns if you want, it doesn't really matter for the next step, but
