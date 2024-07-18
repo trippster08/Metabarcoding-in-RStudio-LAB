@@ -4,7 +4,7 @@
 
 ## Load Libraries ==============================================================
 # Load all R packages you may need if not coming directly from the previous
-# step. 
+# step.
 library(dada2)
 library(digest)
 library(phyloseq)
@@ -145,7 +145,7 @@ names(filtRs) <- sample.names
 # gracefully when using the multithreading functionality".
 
 # "truncLen=c(i,j)" is how you tell Dada2 where to truncate all forward (i) and
-# reverse (j) reads. Using "0" means reads will not be truncated. 
+# reverse (j) reads. Using "0" means reads will not be truncated.
 # maxEE sets how many expected errors are allowed before a read is filtered out.
 
 # The amount to truncate is a common question, and very unsettled. I usually
@@ -451,7 +451,8 @@ head(repseq.md5.asv)
 ## Export Sequence-Table with md5 Hash =========================================
 # This exports a sequence-table: columns of ASV's (shown as a md5 hash instead
 # of sequence), rows of samples, and values = number of reads. With this table
-# you will also need a file that relates each ASV to it's representative md5 hash. We download this in the next section.
+# you will also need a file that relates each ASV to it's representative md5
+# hash. We download this in the next section.
 
 write.table(
   seqtab.nochim.md5,
@@ -469,7 +470,7 @@ write.table(
 # This exports all the ASVs in fasta format, with ASV hash as the sequence
 # name. This is analogous to the representative sequence output in Qiime2.
 write.fasta(
-  sequences = as.list(repseq.md5.asv$ASV), 
+  sequences = as.list(repseq.md5.asv$ASV),
   names = repseq.md5.asv$md5,
   open = "w",
   as.string = FALSE,
