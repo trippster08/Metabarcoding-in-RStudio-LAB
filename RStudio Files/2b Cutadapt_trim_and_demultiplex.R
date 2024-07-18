@@ -25,11 +25,11 @@ setwd ("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME
 
 # Create the subdirectories for the trimmed reads that have been demutiplexed by
 # gene. Each subdirectory should have the same name that the primers have in the
-# primer file. In the example below, replace "GENEX" with whatever the name of 
+# primer file. In the example below, replace "GENEX" with whatever the name of
 # that particular gene. You should create as many directories as you have genes
 # in the run.
-dir.create("data/working/trimmed_sequences/GENE1", recursive=TRUE)
-dir.create("data/working/trimmed_sequences/GENE2", recursive=TRUE)
+dir.create("data/working/trimmed_sequences/GENE1", recursive = TRUE)
+dir.create("data/working/trimmed_sequences/GENE2", recursive = TRUE)
 
 # Make a list of all the files in your "data/raw" folder.
 reads.to.trim <- list.files("data/raw")
@@ -63,7 +63,7 @@ head(sample.names)
 # tell cutadapt to look for primers on the 3' end of each read, as well. These
 # primers will be ther reverse complement of the normal primers. They also will
 # not be anchored, so the files don't need to include any spacers, and if they
-# are not found, the read will still be kept. 
+# are not found, the read will still be kept.
 
 # If you know that there will not be any readthrough, you can remove the two
 # paths to the RC primers, and two entire lines from the cutadapt arguments:
@@ -127,8 +127,8 @@ for (i in seq_along(sample.names)) {
 # the 3' end as well as the 5' end. Cutadapt will only remove one primer from
 # a sample each time it's run.
 
-# --cores=0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt to
-# automatically detect the number of cores.
+# --cores=0 tells cutadapt how many cores to use while trimming. 0 sets cutadapt
+# to automatically detect the number of cores.
 
 # -g and -G are the paths to the 5' primers with spacers
 # -a and -A are the paths to the 3' RC primers. If you are certain there is no
@@ -139,50 +139,94 @@ for (i in seq_along(sample.names)) {
 
 # The final line contains the two paired input files
 
-# It appears that sometimes when you have multiple genes in a single run,you get
-# micro-contamination, a very small number of sequences of the wrong gene in
-# your target gene directory. We will check to see if this happens, and if it
-# does, remove these off-target reads.
+## Remove Empty or Misidentified Reads =========================================
 
-# Check to see how many wrong-gene occurances there are for one gene. Replace
+# When cutadapt moves each read to it's primer-specific directory, it also
+# sometimes misidentifies reads and places them into the wrong directory, or it
+# creates files for the incorrect gene (e.g. creating a file for gene1 reads in
+# the gene2 directory) but does not put any reads into that file (so it ends up
+# being an empty file). Misidentified reads so far have proven to be low-quality
+# or problematic reads, and always get filtered out in subsequent steps, but I
+# still like to remove these reads from analyses, but keep them just in case.
+
+# Check to see how many wrong-gene occurances there are for gene1. Replace
 # "gene1" with your first gene name, and "gene2" with your second gene name
 # for all instances below.
-list.files ("data/working/trimmed_sequences/gene1", pattern="gene2", full.names = TRUE)
+list.files(
+  "data/working/trimmed_sequences/gene1",
+  pattern = "gene2",
+  full.names = TRUE
+)
 # If you get anything other than "character(0)", save the names of the samples
-# with these micro-contaminations. Replace all instances of "gene1" and "gene2"
+# with these misidentifications. Replace all instances of "gene1" and "gene2"
 # with your genes.
-
-# Make a list of all wrong-gene occurances for gene1 ()
-contam.gene1 <- sort(list.files ("data/working/trimmed_sequences/gene1", pattern="gene2"))
-contam.full.gene1 <- sort(list.files ("data/working/trimmed_sequences/gene1", pattern="gene2", full.names = TRUE))
+misID.gene1 <- sort(
+  list.files(
+    "data/working/trimmed_sequences/gene1",
+    pattern = "gene2",
+    full.names = TRUE
+  )
+)
 # Check your object to make sure the command worked
-head(contam.gene1)
-file.size(contam.full.gene1)
-dir.create("data/working/contam_gene1", recursive=TRUE)
-
-file.copy(from = paste0("data/working/trimmed_sequences/gene1/", contam.gene1),
-            to = paste0("data/working/contam_gene1/", contam.gene1))
-file.remove(paste0("data/working/trimmed_sequences/gene1/", contam.gene1))
-# Check the file size of this object to get an estimate of the number of reads
+head(misID.gene1)
+# Check the file size of these files to get an estimate of the number of reads
 # each micro-contaminate has. If file sizes are < 10000, it contains less than
 # 20 reads (and file sizes below 50 are empty). If you have any files that are
-# signficantly larger, you may have contaminatino issues.
-file.size(gene1.contam.gene1)
-# Remove these micro-contaminates
-file.remove(gene1.contam)
+# signficantly larger, you may have contamination issues.
+file.size(misID.gene1)
+# Move all the misidentified/empty files into a newly created "misID_gene1"
+# directory. file.rename moves the files you want to move, and deletes them from
+# their original directory.
+dir.create("data/working/misID_gene1", recursive = TRUE)
+file.rename(
+  from = paste0(
+    "data/working/trimmed_sequences/gene1/",
+    misID.gene1
+  ),
+  to = paste0(
+    "data/working/misID_gene1/",
+    misID.gene1
+  )
+)
 # Check to make sure the removal worked. You should get "character(0)".
-list.files ("data/working/trimmed_sequences/gene", pattern="COI", full.names = TRUE)
+list.files(
+  "data/working/trimmed_sequences/gene1",
+  pattern = "gene1",
+  full.names = TRUE
+)
 # Repeat this process with your second gene. Make sure to reverse the path to
 # your trimmed reads, and "pattern=" arguments
 
-contam.gene2 <- sort(list.files ("data/working/trimmed_sequences/gene2", pattern="gene1"))
-contam.full.gene2 <- sort(list.files ("data/working/trimmed_sequences/gene2", pattern="gene1", full.names = TRUE))
-head(contam.gene2)
-file.size(contam.full.gene2)
-dir.create("data/working/contam_gene2", recursive=TRUE)
+list.files(
+  "data/working/trimmed_sequences/gene1",
+  pattern = "gene2",
+  full.names = TRUE
+)
 
-file.copy(from = paste0("data/working/trimmed_sequences/gene2/", contam.gene2),
-            to = paste0("data/working/contam_gene2/", contam.gene2))
-file.remove(paste0("data/working/trimmed_sequences/gene2/", contam.gene2))
+misID.gene2 <- sort(
+  list.files (
+    "data/working/trimmed_sequences/gene2",
+    pattern="gene1",
+    full.names = TRUE
+  )
+)
+head(misID.gene2)
+file.size(misID.gene2)
 
-list.files ("data/working/trimmed_sequences/gene2", pattern="gene1", full.names = TRUE)
+dir.create("data/working/misID_gene2", recursive = TRUE)
+file.rename(
+  from = paste0(
+    "data/working/trimmed_sequences/gene2/",
+    misID.gene2
+  ),
+  to = paste0(
+    "data/working/contam_gene2/",
+    misID.gene2
+  )
+)
+
+list.files (
+  "data/working/trimmed_sequences/gene2",
+  pattern="gene1",
+  full.names = TRUE
+)
