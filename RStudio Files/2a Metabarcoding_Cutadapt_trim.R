@@ -34,10 +34,10 @@ reads.to.trim.R <- reads.to.trim[str_detect(reads.to.trim, "R2_001.fastq.gz")]
 # Separate the elements of "reads.to.trim.F" by underscore, and save the first
 # element as "sample.names".
 sample.names <- sapply(strsplit(basename(reads.to.trim.F), "_"), `[`, 1)
-head (sample.names)
+head(sample.names)
 
 # Define the path to your primer definition fasta file, if you have more than
-# one potential primer to trim. This path will be different for each user. 
+# one potential primer to trim. This path will be different for each user.
 
 # At LAB, we use both Nextera and iTru sequencing primers. Currently, our Truseq
 # primers include spacers between the sequencing primer and the amplicon primer
@@ -56,7 +56,7 @@ head (sample.names)
 # tell cutadapt to look for primers on the 3' end of each read, as well. These
 # primers will be ther reverse complement of the normal primers. They also will
 # not be anchored, so the files don't need to include any spacers, and if they
-# are not found, the read will still be kept. 
+# are not found, the read will still be kept.
 
 # If you know that there will not be any readthrough, you can remove the two
 # paths to the RC primers, and two entire lines from the cutadapt arguments:
