@@ -301,7 +301,7 @@ merged <- mergePairs(
 head(merged[[1]])
 head(merged[[6]])
 
-## Create and Trim Sequence-Table ==============================================
+## Create Sequence-Table =======================================================
 
 # Now we make a sequence-table containing columns for unique sequence (ASV),
 # rows for each sample, and numbers of reads for each ASV/sample combination as
@@ -313,23 +313,6 @@ head(merged[[6]])
 seqtab <- makeSequenceTable(merged)
 # This describes the dimensions of the table just made
 dim(seqtab)
-
-# This shows the length of the representative sequences (ASV's). Typically,
-# there are a lot of much longer and much shorter sequences.
-table(nchar(getSequences(seqtab)))
-
-# If we want to remove the "excessively" long or short sequences, we can do so
-# here. The lengths used here are arbitrary. I'm not sure how to justify a
-# cut-off, to be honest. You can sometimes see the a pattern here corresponding
-# to codon position for protein-coding genes (there are more ASV's in multiples
-# of three), so you may cut where the pattern is no longer visible (i.e. there
-# are not more reads in lengths in multiples of threes than at other lengths).
-# I tend not to remove any ASV's at this point
-
-# In this example, we only keep reads between 298 and 322 bp in length.
-seqtab313 <- seqtab[, nchar(colnames(seqtab)) %in% 298:322]
-dim(seqtab313)
-table(nchar(getSequences(seqtab313)))
 
 ## Remove Chimeric Sequences ===================================================
 
@@ -344,6 +327,24 @@ seqtab.nochim <- removeBimeraDenovo(
 # We look at the dimensions of the new sequence-table
 dim(seqtab.nochim)
 
+## Examine Sequence Lengths and Trim ===========================================
+
+# This shows the length of the representative sequences (ASV's). Typically,
+# there are a lot of much longer and much shorter sequences.
+table(nchar(getSequences(seqtab.nochimn)))
+
+# If we want to remove the "excessively" long or short sequences, we can do so
+# here. The lengths used here are arbitrary. I'm not sure how to justify a
+# cut-off, to be honest. You can sometimes see the a pattern here corresponding
+# to codon position for protein-coding genes (there are more ASV's in multiples
+# of three), so you may cut where the pattern is no longer visible (i.e. there
+# are not more reads in lengths in multiples of threes than at other lengths).
+# I tend not to remove any ASV's at this point
+
+# In this example, we only keep reads between 298 and 322 bp in length.
+seqtab.nochim.313 <- seqtab.nochim[, nchar(colnames(seqtab.nochim)) %in% 298:322]
+dim(seqtab.nochim.313)
+table(nchar(getSequences(seqtab.nochim.313)))
 
 ## Track Reads Through Dada2 Process ===========================================
 
@@ -448,14 +449,29 @@ colnames(repseq.md5.asv) <- c("md5", "ASV")
 
 head(repseq.md5.asv)
 
-## Export Sequence-Table with md5 Hash =========================================
-# This exports a sequence-table: columns of ASV's (shown as a md5 hash instead
-# of sequence), rows of samples, and values = number of reads. With this table
-# you will also need a file that relates each ASV to it's representative md5
-# hash. We download this in the next section.
+## Create Feature-Table from Sequence-Table ====================================
+# seqtab.nochim.md5 is a sequence table, with ASV columns and sample rows. Most
+# people seem to use Feature-Tables, with ASV rows and sample columns, so here
+# we create a Feature-Table
+
+# Transpose the sequence-table, and convert the result into a tibble.
+seqtab.nochim.transpose.md5 <- as_tibble(t(seqtab.nochim.md5), rownames = "ASV")
+
+# Check to make sure the table is transposed. The easiest way is just to look at
+# the column headings and see if they are now samples (plus "ASV"), as they
+# should be.
+colnames(seqtab.nochim.transpose.md5)
+
+
+
+## Export Feature-Table with md5 Hash =========================================
+# This exports a feature-table: row of ASV's (shown as a md5 hash instead
+# of sequence), columns of samples, and values = number of reads. With this
+# table you will also need a file that relates each ASV to it's representative
+# md5 hash. We download this in the next section.
 
 write.table(
-  seqtab.nochim.md5,
+  seqtab.nochim.transpose.md5,
   file = "data/results/PROJECTNAME_sequence-table_md5.tsv",
   quote = FALSE,
   sep = "\t",
