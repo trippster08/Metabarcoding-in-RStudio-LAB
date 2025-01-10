@@ -98,7 +98,7 @@ Get raw reads. If you download them directly using BaseSpace Downloader, it crea
 
 DO NOT USE THIS COMMAND AS-IS, USE YOUR OWN PATH, INCLUDING YOUR USERNAME AND WHATEVER PROJECT NAME YOU WANT TO USE!
 ```
-mkdir -p /Users/USERNAME/Dropbox\ \(Smithsonian\)/Projects_Metabarcoding/PROJECTNAME.
+mkdir -p /Users/USERNAME/Dropbox\ \(Smithsonian\)/Projects_Metabarcoding/PROJECTNAME
 ```
 Download the folder containing your raw reads into this project directory using basespace.
 
