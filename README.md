@@ -105,7 +105,7 @@ Download the folder containing your raw reads into this project directory using 
 The rest of this pipeline is run through RStudio.
 
 ### RStudio Preparation
-The first thing to do after opening RStudio is create a new project, select to creat it from an "Existing Directory", and chose the directory that you will be using as your working directory. Once you have created this project, it will make this directory the current working directory, and you won't need to set your working directory later.
+The first thing to do after opening RStudio is create a new project, select to create it from an "Existing Directory", and chose the directory that you will be using as your working directory. Once you have created this project, it will make this directory the current working directory, and you won't need to set your working directory later.
 
 Next we install and load all the R libraries needed for this pipeline. We also set up our directory structure and find, load, and copy the raw Illumina read files to the directory from which they will be analyzed. 
 
