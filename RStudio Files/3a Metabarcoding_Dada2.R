@@ -349,7 +349,25 @@ seqtab.nochim <- removeBimeraDenovo(
 # We look at the dimensions of the new sequence-table
 dim(seqtab.nochim)
 
+# Make a list of the ASVs that are considered chimeras, in case you want to look
+# at them later
+chimeras.list <- isBimeraDenovoTable(
+  seqtab,
+  method = "consensus",
+  multithread = TRUE,
+  verbose = TRUE
+)
+repseq.all <- getSequences(seqtab)
+repseq.chimera <- repseq.all[chimeras.list]
 
+# Export this as a fasta
+write.fasta(
+  sequences = as.list(repseq.chimera),
+  names = repseq.chimera,
+  open = "w",
+  as.string = FALSE,
+  file.out = "data/results/rep-seq_chimeras.fas"
+)
 
 ## Examine Sequence Lengths and Trim ===========================================
 
@@ -491,6 +509,9 @@ save(
   merged,
   seqtab,
   seqtab.nochim,
+  chimeras.list,
+  repseq.all,
+  repseq.chimera,
   getN,
   track,
   seq.length.table,
