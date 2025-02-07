@@ -36,7 +36,7 @@ fnFs <- sort(list.files(path, pattern = "_R1.fastq.gz", full.names = TRUE))
 fnRs <- sort(list.files(path, pattern = "_R2.fastq.gz", full.names = TRUE))
 
 # Make sure you have the correct number of samples, and that they match the
-# number of sample names in the list you made previously.
+# number of sample names you made in the previous section (2a or 2b: Cutadapt).
 length(fnFs)
 length(fnRs)
 length(sample.names)
@@ -178,6 +178,22 @@ out <- filterAndTrim(
 out
 head(out)
 
+# Save all the objects created to this point
+save(
+  path,
+  truncF,
+  truncR,
+  fnFs,
+  fnRs,
+  sample.names,
+  qualplotF,
+  qualplotR,
+  filtFs,
+  filtRs,
+  out,
+  file = "data/results/out.Rdata"
+)
+
 # After filtering, if there are any samples that have no remaining reads
 # (i.e. reads.out = 0), you will get the following error running learnErrors:
 # "Error in derepFastq(fls[[i]], qualityType = qualityType) : Not all provided
@@ -187,20 +203,14 @@ head(out)
 
 # This step changes filtFs and filtRs to only contain the names of samples with
 # reads. Do this only if there are samples in "out" with zero reads.
-
-# You will notice that the number of items in filtFs is now the number of
-# samples with reads (i.e. the description for filtFs and filtRs goes from
-# "Named chr [1:N]" to "Named chr [1:N-(# of empty samples)]).
 exists <- file.exists(filtFs) & file.exists(filtRs)
 exists
 filtFs <- filtFs[exists]
 filtRs <- filtRs[exists]
 
-# I sometimes look at the quality of the filtered reads. Sometimes my filtering
-# parameters don't get rid of all the poor quality at the 3' end, but if quality
-# is too poor, they won't merge, so it doesn't seem to hurt read passage.
-plotQualityProfile(filtFs[1:17], aggregate = TRUE)
-plotQualityProfile(filtRs[1:17], aggregate = TRUE)
+# You will notice that the number of items in filtFs is now the number of
+# samples with reads (i.e. the description for filtFs and filtRs goes from
+# "Named chr [1:N]" to "Named chr [1:N-(# of empty samples)]).
 
 ## Estimating Error Rates and Denoising ========================================
 
@@ -272,6 +282,18 @@ dadaRs <- dada(
 dadaFs[[1]]
 dadaRs[[1]]
 
+# Save all the objects created between out and here
+save(
+  exists,
+  filtFs,
+  filtRs,
+  errF,
+  errR,
+  dadaFs,
+  dadaRs,
+  file = "data/results/denoise.RData"
+)
+
 ## Merge Paired Sequences ======================================================
 
 # Here we merge the paired reads. merged calls for the forward denoising result
@@ -326,6 +348,8 @@ seqtab.nochim <- removeBimeraDenovo(
 )
 # We look at the dimensions of the new sequence-table
 dim(seqtab.nochim)
+
+
 
 ## Examine Sequence Lengths and Trim ===========================================
 
@@ -462,7 +486,21 @@ seqtab.nochim.transpose.md5 <- as_tibble(t(seqtab.nochim.md5), rownames = "ASV")
 # should be.
 colnames(seqtab.nochim.transpose.md5)
 
-
+# Save all the objects created between denoise and here
+save(
+  merged,
+  seqtab,
+  seqtab.nochim,
+  getN,
+  track,
+  seq.length.table,
+  repseq,
+  repseq.md5,
+  seqtab.nochim.md5,
+  repseq.md5.asv,
+  seqtab.nochim.transpose.md5,
+  file = "data/results/feattab.RData"
+)
 
 ## Export Feature-Table with md5 Hash =========================================
 # This exports a feature-table: row of ASV's (shown as a md5 hash instead
