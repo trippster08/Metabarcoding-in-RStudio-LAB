@@ -22,7 +22,7 @@ install.packages("tidyverse")
 install.packages("seqinr")
 install.packages("ape")
 install.packages("ade4")
-install.packages("filesstrings")
+
 
 # Load all the libraries that will be needed for this pipeline. These will have
 # to be reloaded every time you restart RStudio
@@ -34,7 +34,7 @@ library(seqinr)
 library(ape)
 library(DECIPHER)
 library(ade4)
-library(filesstrings)
+
 
 ## File Housekeeping ===========================================================
 # Set up your working directory. If you created your new project in the
