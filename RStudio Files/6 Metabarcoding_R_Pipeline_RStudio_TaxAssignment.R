@@ -12,7 +12,6 @@ library(seqinr)
 library(ape)
 library(DECIPHER)
 library(ade4)
-library(filesstrings)
 
 # Set up your working directory. If you created your new project in the
 # directory you want as your working directory (or came directory from the

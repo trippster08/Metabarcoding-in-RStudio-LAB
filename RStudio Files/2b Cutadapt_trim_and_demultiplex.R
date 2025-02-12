@@ -12,7 +12,6 @@ library(seqinr)
 library(ape)
 library(DECIPHER)
 library(ade4)
-library(filesstrings)
 
 ## File Housekeeping ===========================================================
 
