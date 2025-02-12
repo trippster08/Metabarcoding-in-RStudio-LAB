@@ -46,16 +46,20 @@ library(ade4)
 # special characters).
 setwd ("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
 
+# Create all the subdirectories we will use
+# Define the directory names
+dir_names <- c(
+  "data/raw",
+  "data/working/trimmed_sequences",
+  "data/results")
+# Create the directories using sapply
+sapply(dir_names, dir.create, recursive = TRUE)
+
 # Find all the read files in the project directory, save their paths, and
 # confirm. Basespace saves the reads in sample-specific folders, using
 # "recursive = TRUE" allows us to find all read files in the working directory
 raw.reads <- list.files(pattern = ".fastq.gz", recursive = TRUE)
 head(raw.reads)
-
-# Create all the subdirectories we will use
-dir.create("data/raw", recursive = TRUE)
-dir.create("data/working/trimmed_sequences", recursive=TRUE)
-dir.create("data/results")
 
 # Copy the read files to the "data/raw" directory, and confirm that they are
 # there.
