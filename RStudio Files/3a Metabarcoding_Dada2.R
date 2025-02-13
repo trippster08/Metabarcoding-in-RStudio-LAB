@@ -101,6 +101,12 @@ qualplotF
 # starts at 190 bp, ends at 220 bp, and has axis ticks every 2 bp.
 qualplotF + scale_x_continuous(limits = c(190, 220), breaks = seq(190, 220, 2))
 
+ggsave(
+  "data/results/qualplotF.pdf",
+  plot = qualplotF,
+  width = 9,
+  height = 9
+)
 # I also typically look at all (or most of) the individual quality plots, to see
 # if there are any troublesome samples. Negative controls often have poor
 # quality, but you may want to rerun any samples that are substantially worse
@@ -118,6 +124,14 @@ qualplotR <- plotQualityProfile(
 qualplotR
 qualplotR + scale_x_continuous(limits = c(150, 200), breaks = seq(150, 200, 2))
 
+ggsave(
+  "data/results/qualplotR.pdf",
+  plot = qualplotR,
+  width = 9,
+  height = 9
+)
+
+
 plotQualityProfile(
   fnRs[1:N],
   aggregate = FALSE
@@ -125,8 +139,22 @@ plotQualityProfile(
 
 # This creates files for the reads that will be quality filtered with dada2
 # in the next step.
-filtFs <- file.path(path, "filtered", paste0(sample.names, "_F_filt.fastq.gz"))
-filtRs <- file.path(path, "filtered", paste0(sample.names, "_R_filt.fastq.gz"))
+filtFs <- file.path(
+  path,
+  "filtered",
+  paste0(
+    sample.names,
+    "_F_filt.fastq.gz"
+  )
+)
+filtRs <- file.path(
+  path,
+  "filtered",
+  paste0(
+    sample.names,
+    "_R_filt.fastq.gz"
+  )
+)
 
 # This inserts sample names to these newly created files. You'll notice that in
 # the environment pane, the description of filtFs and filtRs goes from
@@ -175,7 +203,17 @@ out <- filterAndTrim(
 # Usually we don't have that many samples, so I just look at "out" in its
 # entirety, but if there are lots of samples, just look at the first 6.
 out
-head(out)
+#head(out)
+
+# Export out as a tsv
+write.table(
+  out,
+  file = "data/results/filtered_reads.tsv",
+  quote = FALSE,
+  sep = "\t",
+  row.names = TRUE,
+  col.names = NA
+)
 
 # Save all the objects created to this point
 save(
@@ -190,7 +228,7 @@ save(
   filtFs,
   filtRs,
   out,
-  file = "data/results/out.Rdata"
+  file = "data/working/out.Rdata"
 )
 
 # After filtering, if there are any samples that have no remaining reads
@@ -248,8 +286,22 @@ errR <- learnErrors(
 # to look at here are to make sure that each black line is a good fit to the
 # observed error rates, and that estimated error rates decrease with increased
 # quality.
-plotErrors(errF, nominalQ = TRUE)
-plotErrors(errR, nominalQ = TRUE)
+error.plots.F <- plotErrors(errF, nominalQ = TRUE)
+error.plots.F
+error.plots.R <- plotErrors(errR, nominalQ = TRUE)
+error.plots.R
+ggsave(
+  "data/results/errorplotsF.pdf",
+  plot = error.plots.F,
+  width = 9,
+  height = 9
+)
+ggsave(
+  "data/results/errorplotsR.pdf",
+  plot = error.plots.R,
+  width = 9,
+  height = 9
+)
 
 # This applies the "core sample inference algorithm" (i.e. denoising) in dada2
 # to get corrected unique sequences. The two main inputs are the first, which is
@@ -283,14 +335,13 @@ dadaRs[[1]]
 
 # Save all the objects created between out and here
 save(
-  exists,
   filtFs,
   filtRs,
   errF,
   errR,
   dadaFs,
   dadaRs,
-  file = "data/results/denoise.RData"
+  file = "data/working/denoise.RData"
 )
 
 ## Merge Paired Sequences ======================================================
@@ -356,7 +407,10 @@ chimeras.list <- isBimeraDenovoTable(
   multithread = TRUE,
   verbose = TRUE
 )
+# This makes a new vector containing all the ASV's (unique sequences) returned
+# by dada2.
 repseq.all <- getSequences(seqtab)
+# Get a list of just chimera ASVs
 repseq.chimera <- repseq.all[chimeras.list]
 
 # Export this as a fasta
@@ -372,7 +426,16 @@ write.fasta(
 
 # This shows the length of the representative sequences (ASV's). Typically,
 # there are a lot of much longer and much shorter sequences.
-table(nchar(getSequences(seqtab.nochimn)))
+seq.length.table <- table(nchar(getSequences(seqtab.nochim)))
+# Export this table as a .tsv
+write.table(
+  seq.length.table,
+  file="data/results/ASV_lengths_table.tsv",
+  quote = FALSE,
+  sep = "\t",
+  row.names = TRUE,
+  col.names = NA
+)
 
 # If we want to remove the "excessively" long or short sequences, we can do so
 # here. The lengths used here are arbitrary. I'm not sure how to justify a
@@ -455,40 +518,40 @@ write.table(
 # To create a Sequence list with md5 hash instead of ASVs, we first need to
 # create a list of md5 hash's of all ASV's.
 
-# This makes a new vector containing all the ASV's (unique sequences) returned
-# by dada2. We are going to use this list to create md5 hashes. Use whatever
-#  table you will later use for your analyses (e.g. seqtab.nochim)
-repseq <- getSequences(seqtab.nochim)
+# This makes a new vector containing all the non-chimeric ASV's (unique sequences)
+# returned by dada2. We are going to use this list to create md5 hashes. Use
+# whatever table you will later use for your analyses (e.g. seqtab.nochim)
+repseq.nochim <- getSequences(seqtab.nochim)
 # We want to look at this list, to make sure you are getting the right thing
-head(repseq)
+head(repseq.nochim)
 
 # Use the program digest (in a For Loop) to create a new vector containing the
 # unique md5 hashes of the representative sequences (ASV's). This results in
 # identical feature names to those assigned in Qiime2.
 repseq.md5 <- c()
-for (i in seq_along(repseq)) {
-  repseq.md5[i] <- digest(
-    repseq[i],
+for (i in seq_along(repseq.nochim)) {
+  repseq.nochim.md5[i] <- digest(
+    repseq.nochim[i],
     serialize = FALSE,
     algo = "md5"
   )
 }
 # Examine the list of feature hashes
-head(repseq.md5)
+head(repseq.nochim.md5)
 
 
 # Add md5 hash to the sequence-table from the DADA2 analysis.
 seqtab.nochim.md5 <- seqtab.nochim
-colnames(seqtab.nochim.md5) <- repseq.md5
+colnames(seqtab.nochim.md5) <- repseq.nochim.md5
 View(seqtab.nochim.md5)
 
 # Create an md5/ASV table, with each row as an ASV and it's representative md5
 # hash.
-repseq.md5.asv <- tibble(repseq.md5, repseq)
+repseq.nochim.md5.asv <- tibble(repseq.nochim.md5, repseq.nochim)
 # Rename column headings
-colnames(repseq.md5.asv) <- c("md5", "ASV")
+colnames(repseq.nochim.md5.asv) <- c("md5", "ASV")
 
-head(repseq.md5.asv)
+head(repseq.nochim.md5.asv)
 
 ## Create Feature-Table from Sequence-Table ====================================
 # seqtab.nochim.md5 is a sequence table, with ASV columns and sample rows. Most
@@ -514,10 +577,10 @@ save(
   getN,
   track,
   seq.length.table,
-  repseq,
-  repseq.md5,
+  repseq.nochim,
+  repseq.nochim.md5,
   seqtab.nochim.md5,
-  repseq.md5.asv,
+  repseq.nochim.md5.asv,
   seqtab.nochim.transpose.md5,
   file = "data/results/feattab.RData"
 )
@@ -544,8 +607,8 @@ write.table(
 # This exports all the ASVs in fasta format, with ASV hash as the sequence
 # name. This is analogous to the representative sequence output in Qiime2.
 write.fasta(
-  sequences = as.list(repseq.md5.asv$ASV),
-  names = repseq.md5.asv$md5,
+  sequences = as.list(repseq.nochim.md5.asv$ASV),
+  names = repseq.nochim.md5.asv$md5,
   open = "w",
   as.string = FALSE,
   file.out = "data/results/PROJECTNAME_rep-seq.fas"
@@ -554,7 +617,7 @@ write.fasta(
 # This exports all the ASVs and their respective md5 hashes as a two-column
 # table.
 write.table(
-  repseq.md5.asv,
+  repseq.nochim.md5.asv,
   file = "data/results/PROJECTNAME_representative_sequence_table_md5.tsv",
   quote = FALSE,
   sep = "\t",
