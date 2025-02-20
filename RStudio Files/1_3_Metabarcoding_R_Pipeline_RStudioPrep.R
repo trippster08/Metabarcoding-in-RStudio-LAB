@@ -9,7 +9,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)){
 }
 # Install Dada2. You may get an error telling you to install a different version
 # of Dada2. Change "3.17" to whatever version RStudio tells you.
-BiocManager::install("dada2", version = "3.20")
+BiocManager::install("dada2", version = "3.17")
 # Install Phyloseq
 BiocManager::install("phyloseq")
 # Install DECIPHER
@@ -28,12 +28,9 @@ install.packages("ade4")
 # to be reloaded every time you restart RStudio
 library(dada2)
 library(digest)
-library(phyloseq)
 library(tidyverse)
 library(seqinr)
 library(ape)
-library(DECIPHER)
-library(ade4)
 
 
 ## File Housekeeping ===========================================================
@@ -45,13 +42,13 @@ library(ade4)
 # directory, you don't need a character escape (i.e. no \ preceding spaces or
 # special characters).
 setwd ("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
-
 # Create all the subdirectories we will use
 # Define the directory names
 dir_names <- c(
   "data/raw",
   "data/working/trimmed_sequences",
-  "data/results")
+  "data/results"
+)
 # Create the directories using sapply
 sapply(dir_names, dir.create, recursive = TRUE)
 
