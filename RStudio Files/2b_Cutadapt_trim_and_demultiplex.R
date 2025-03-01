@@ -20,7 +20,9 @@ library(ade4)
 # previous step in the pipeline), you don't need to do this, and
 # skip to the next RStudio command. If you need to set your working directory,
 # substitute your own path for the one below.
-setwd ("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
+setwd(
+  "/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME"
+)
 
 # Create the subdirectories for the trimmed reads that have been demutiplexed by
 # gene. Each subdirectory should have the same name that the primers have in the
@@ -31,16 +33,16 @@ dir.create("data/working/trimmed_sequences/GENE1", recursive = TRUE)
 dir.create("data/working/trimmed_sequences/GENE2", recursive = TRUE)
 
 # Make a list of all the files in your "data/raw" folder.
-reads.to.trim <- list.files("data/raw")
-head(reads.to.trim)
+reads_to_trim <- list.files("data/raw")
+head(reads_to_trim)
 # Separate files by read direction (R1,R2), and save each
-reads.to.trim.F <- reads.to.trim[str_detect(reads.to.trim, "R1_001.fastq.gz")]
-reads.to.trim.R <- reads.to.trim[str_detect(reads.to.trim, "R2_001.fastq.gz")]
+reads_to_trim_F <- reads_to_trim[str_detect(reads_to_trim, "R1_001.fastq.gz")]
+reads_to_trim_R <- reads_to_trim[str_detect(reads_to_trim, "R2_001.fastq.gz")]
 
 # Separate the elements of "reads.to.trim.F" by underscore, and save the first
 # element as "sample.names".
-sample.names <- sapply(strsplit(basename(reads.to.trim.F), "_"), `[`, 1)
-head(sample.names)
+sample_names <- sapply(strsplit(basename(reads_to_trim_F), "_"), `[`, 1)
+head(sample_names)
 
 # Define the path to your primer definition fasta file, if you have more than
 # one potential primer to trim. This path will be different for each user.
@@ -71,10 +73,10 @@ head(sample.names)
 # only have one primer.
 
 # THE PATHS SHOWN BELOW ARE EXAMPLES ONLY. PLEASE CHANGE PATH TO YOUR PRIMER FILES.
-path.to.Fprimers <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERF.fas"
-path.to.Rprimers <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERR.fas"
-path.to.FprimersRC <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERF_RC.fas"
-path.to.RprimersRC <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERR_RC.fas"
+path_to_Fprimers <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERF.fas"
+path_to_Rprimers <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERR.fas"
+path_to_FprimersRC <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERF_RC.fas"
+path_to_RprimersRC <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERR_RC.fas"
 
 ## Run Cutadapt ================================================================
 
@@ -90,20 +92,29 @@ cutadapt_binary <- "/Users/macdonaldk/miniconda3/envs/cutadapt/bin/cutadapt"
 # "-g ^FORWARDPRIMERSEQUENCE" in quotations, followed by a comma, and
 # "-G ^REVERSEPRIMERSEQUENCE" in quotations, followed by a comma.
 
-
-for (i in seq_along(sample.names)) {
+# fmt: skip
+for (i in seq_along(sample_names)) {
   system2(
     cutadapt_binary, args = c(
       "-e 0.2 --discard-untrimmed --minimum-length 30 -n 2 -O 3 --cores=0",
-      "-g", paste0("file:",path.to.Fprimers),
-      "-a", paste0("file:",path.to.RprimersRC),
-      "-G", paste0("file:",path.to.Rprimers),
-      "-A", paste0("file:",path.to.FprimersRC),
-      "-o", paste0("data/working/trimmed_sequences/{name}/",sample.names[i],"_trimmed_R1.fastq.gz"),
-      "-p", paste0("data/working/trimmed_sequences/{name}/",sample.names[i],"_trimmed_R2.fastq.gz"),
-      paste0("data/raw/",reads.to.trim.F[i]), paste0("data/raw/",reads.to.trim.R[i])
-      )
+      "-g", paste0("file:", path_to_Fprimers),
+      "-a", paste0("file:", path_to_RprimersRC),
+      "-G", paste0("file:", path_to_Rprimers),
+      "-A", paste0("file:", path_to_FprimersRC),
+      "-o", paste0(
+        "data/working/trimmed_sequences/{name}/",
+        sample.names[i],
+        "_trimmed_R1.fastq.gz"
+      ),
+      "-p", paste0(
+        "data/working/trimmed_sequences/{name}/",
+        sample.names[i],
+        "_trimmed_R2.fastq.gz"
+      ),
+      paste0("data/raw/", reads_to_trim_F[i]),
+      paste0("data/raw/", reads_to_trim_R[i])
     )
+  )
 }
 
 # We are including our default parameters for cutadapt. You can change these
@@ -159,7 +170,7 @@ list.files(
 # If you get anything other than "character(0)", save the names of the samples
 # with these misidentifications. Replace all instances of "gene1" and "gene2"
 # with your genes.
-misID.gene1 <- sort(
+misID_gene1 <- sort(
   list.files(
     "data/working/trimmed_sequences/gene1",
     pattern = "gene2",
@@ -167,12 +178,12 @@ misID.gene1 <- sort(
   )
 )
 # Check your object to make sure the command worked
-head(misID.gene1)
+head(misID_gene1)
 # Check the file size of these files to get an estimate of the number of reads
 # each micro-contaminate has. If file sizes are < 10000, it contains less than
 # 20 reads (and file sizes below 50 are empty). If you have any files that are
 # signficantly larger, you may have contamination issues.
-file.size(misID.gene1)
+file.size(misID_gene1)
 # Move all the misidentified/empty files into a newly created "misID_gene1"
 # directory. file.rename moves the files you want to move, and deletes them from
 # their original directory.
@@ -180,11 +191,11 @@ dir.create("data/working/misID_gene1", recursive = TRUE)
 file.rename(
   from = paste0(
     "data/working/trimmed_sequences/gene1/",
-    misID.gene1
+    misID_gene1
   ),
   to = paste0(
     "data/working/misID_gene1/",
-    misID.gene1
+    misID_gene1
   )
 )
 # Check to make sure the removal worked. You should get "character(0)".
@@ -202,30 +213,30 @@ list.files(
   full.names = TRUE
 )
 
-misID.gene2 <- sort(
-  list.files (
+misID_gene2 <- sort(
+  list.files(
     "data/working/trimmed_sequences/gene2",
-    pattern="gene1",
+    pattern = "gene1",
     full.names = TRUE
   )
 )
-head(misID.gene2)
-file.size(misID.gene2)
+head(misID_gene2)
+file.size(misID_gene2)
 
 dir.create("data/working/misID_gene2", recursive = TRUE)
 file.rename(
   from = paste0(
     "data/working/trimmed_sequences/gene2/",
-    misID.gene2
+    misID_gene2
   ),
   to = paste0(
     "data/working/contam_gene2/",
-    misID.gene2
+    misID_gene2
   )
 )
 
-list.files (
+list.files(
   "data/working/trimmed_sequences/gene2",
-  pattern="gene1",
+  pattern = "gene1",
   full.names = TRUE
 )
