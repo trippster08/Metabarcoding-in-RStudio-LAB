@@ -18,7 +18,9 @@ library(ade4)
 # previous step in the pipeline), you don't need to do this, and
 # skip to the next RStudio command. If you need to set your working directory,
 # substitute your own path for the one below.
-setwd("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
+setwd(
+  "/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME"
+)
 
 ## Assign Taxonomy With DADA2 ==================================================
 # Assign taxonomy. tryRC determines whether to also include the reverse
@@ -46,9 +48,17 @@ setwd("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME"
 # example represents.
 
 taxonomy <- assignTaxonomy(
-  seqtab.nochim,
+  seqtab_nochim,
   "/Users/USERNAME/Dropbox (Smithsonian)/Metabarcoding/Reference_Libraries/REFERENCE.fasta",
-  taxLevels = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "species"),
+  taxLevels = c(
+    "Kingdom",
+    "Phylum",
+    "Class",
+    "Order",
+    "Family",
+    "Genus",
+    "species"
+  ),
   tryRC = FALSE,
   minBoot = 50,
   outputBootstraps = TRUE,
@@ -66,15 +76,15 @@ taxonomy <- assignTaxonomy(
 # identical sequences).  See dada2 manual for more on allowMultiple. The
 # reference database should be in the following format (a unique ID for each
 # reference sequence is not necessary):
-    # >ID <Genus> <species>
-    # ACCTAGAAAGTCGTAGATCGAAGTTGAAGCATCGCCCGATGATCGTCTGAAGCTGTAGCATGAGTCGATTTTCACATTCAGGGATACCAT
-    # >ID <Genus> <species>
-    # CGCTAGAAAGTCGTAGAAGGCTCGGAGGTTTGAAGCATCGCCCGATGGGATCTCGTTGCTGTAGCATGAGTACGGACATTCAGGGATCAT
+# >ID <Genus> <species>
+# ACCTAGAAAGTCGTAGATCGAAGTTGAAGCATCGCCCGATGATCGTCTGAAGCTGTAGCATGAGTCGATTTTCACATTCAGGGATACCAT
+# >ID <Genus> <species>
+# CGCTAGAAAGTCGTAGAAGGCTCGGAGGTTTGAAGCATCGCCCGATGGGATCTCGTTGCTGTAGCATGAGTACGGACATTCAGGGATCAT
 # This is an optional step. You can also assign species without assigning
 # taxonomy first (just giving an output table containing one column of species
 # assignments or "NA") using the command "assignSpecies" (instead of
 # "addSpecies"), and keeping everything else identical.
-taxonomy.species <- addSpecies(
+taxonomy_species <- addSpecies(
   taxonomy,
   "/Users/macdonaldk/Dropbox (Smithsonian)/Metabarcoding/Reference_Libraries/REFERENCE_species.fasta",
   tryRC = false
@@ -86,62 +96,63 @@ View(taxonomy$tax)
 View(taxonomy$boot)
 
 # You can check to see all the uniqe values exist in each column
-unique(taxonomy$tax[,"Phylum"])
-unique(taxonomy$tax[,"Class"])
-unique(taxonomy$tax[,"Order"])
-unique(taxonomy$tax[,"Family"])
+unique(taxonomy$tax[, "Phylum"])
+unique(taxonomy$tax[, "Class"])
+unique(taxonomy$tax[, "Order"])
+unique(taxonomy$tax[, "Family"])
 
 ### Combine taxonomy and bootstrap tables --------------------------------------
 # You can combine the $tax and $boot table, to see simultaneously the taxonomic
 # assignment and the bootstrap support for that assignment.
 
 # Convert taxonomy and bootstrap tables into tibbles (with "ASV" as column 1)
-taxonomy.tax.tb <- as_tibble(
-  taxonomy$tax, 
+taxonomy_tax_tb <- as_tibble(
+  taxonomy$tax,
   rownames = "ASV"
-) 
-dim(taxonomy.tax.tb)
+)
+dim(taxonomy_tax_tb)
 
-taxonomy.boot.tb <- as_tibble(
+taxonomy_boot_tb <- as_tibble(
   taxonomy$boot,
   rownames = "ASV"
-) 
-dim (taxonomy.boot.tb)
+)
+dim(taxonomy_boot_tb)
 
 # Join the two tables using an inner-join with dbplyr (it shouldn't matter here
 # what kind of join you use since the two tables should have the exact same
 # number of rows and row headings (actually, now column 1)). I amend bootstrap
 # column names with "_boot" (e.g. the bootstrap column for genus would be
 # "Genus_boot")
-taxonomy.tb <- inner_join(
-  taxonomy.tax.tb,
-  taxonomy.boot.tb,
+taxonomy_tb <- inner_join(
+  taxonomy_tax_tb,
+  taxonomy_boot_tb,
   by = "ASV",
-  suffix = c("","_boot")
+  suffix = c("", "_boot")
 )
-dim(taxonomy.tb)
-View(taxonomy.tb)
+dim(taxonomy_tb)
+View(taxonomy_tb)
 
 # Add md5 hash from earlier. The order of ASV's is the same as the sequence-
 # table, so there shouldn't be any problem, but you can always redo the md5
 # hash conversion here.
-taxonomy.tb.md5 <- cbind(
-  taxonomy.tb,
-  feature = repseq.md5
+taxonomy_tb_md5 <- cbind(
+  taxonomy_tb,
+  feature = repseq_md5
 )
-View(taxonomy.tb.md5)
+View(taxonomy_tb_md5)
 
 # Rearrange columns so that the md5 hash comes first, then the ASV, then each
 # classfication level followed by it's respective bootstrap column.
-taxonomy.tb.md5 <- taxonomy.tb.md5[ , c(16,1,2,9,3,10,4,11,5,12,6,13,7,14,8,15)]
-View(taxonomy.tb.md5)
+# fmt: skip
+taxonomy_tb_md5 <- taxonomy_tb_md5[ , c(16,1,2,9,3,10,4,11,5,12,6,13,7,14,8,15)]
+View(taxonomy_tb_md5)
 
 # Export this table as a .tsv file. I name it with Project Name,
 # the reference library used, and taxonomy (vs. speciesID).
 write.table(
-  taxonomy.tb.md5, 
-  file="data/results/PROJECTNAME_REFERENCE_taxonomy.tsv",
+  taxonomy_tb_md5,
+  file = "data/results/PROJECTNAME_REFERENCE_taxonomy.tsv",
   quote = FALSE,
-  sep="\t",
+  sep = "\t",
   row.names = FALSE
 )
