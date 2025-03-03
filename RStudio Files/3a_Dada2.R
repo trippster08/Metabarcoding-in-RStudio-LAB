@@ -7,12 +7,8 @@
 # step.
 library(dada2)
 library(digest)
-library(phyloseq)
 library(tidyverse)
 library(seqinr)
-library(ape)
-library(DECIPHER)
-library(ade4)
 
 ## File Housekeeping ===========================================================
 
@@ -90,7 +86,7 @@ head(sample_names)
 # the orange lines are the quartiles (solid for median, dashed for 25% and 75%)
 # and the red line represents the proportion of reads existing at that position.
 qualplotF <- plotQualityProfile(
-  fnFs[1:length(sample_names)],
+  fnFs[1:length(sample_names)], # nolint: seq_linter. # nolint: seq_linter.
   aggregate = TRUE
 )
 qualplotF
@@ -111,7 +107,7 @@ ggsave(
 
 # Examine the reverse reads as you did the forward.
 qualplotR <- plotQualityProfile(
-  fnRs[1:length(sample_names)],
+  fnRs[1:length(sample_names)], # nolint: seq_linter.
   aggregate = TRUE
 )
 qualplotR
@@ -515,9 +511,10 @@ write.table(
 # To create a Sequence list with md5 hash instead of ASVs, we first need to
 # create a list of md5 hash's of all ASV's.
 
-# This makes a new vector containing all the non-chimeric ASV's (unique sequences)
-# returned by dada2. We are going to use this list to create md5 hashes. Use
-# whatever table you will later use for your analyses (e.g. seqtab.nochim)
+# This makes a new vector containing all the non-chimeric ASV's
+# (unique sequences) returned by dada2. We are going to use this list to create
+# md5 hashes. Use whatever table you will later use for your analyses
+# (e.g. seqtab.nochim)
 repseq_nochim <- getSequences(seqtab_nochim)
 # We want to look at this list, to make sure you are getting the right thing
 head(repseq_nochim)
@@ -536,11 +533,21 @@ for (i in seq_along(repseq_nochim)) {
 # Examine the list of feature hashes
 head(repseq_nochim_md5)
 
-
 # Add md5 hash to the sequence-table from the DADA2 analysis.
 seqtab_nochim_md5 <- seqtab_nochim
 colnames(seqtab_nochim_md5) <- repseq_nochim_md5
 View(seqtab_nochim_md5)
+
+# Export this sequence table with column headings as md5 hashs instead of ASV
+# sequences
+write.table(
+  seqtab_nochim_md5,
+  file = "data/results/PROJECT_sequence-table-md5.tsv",
+  quote = FALSE,
+  sep = "\t",
+  row.names = TRUE,
+  col.names = NA
+)
 
 # Create an md5/ASV table, with each row as an ASV and it's representative md5
 # hash.
