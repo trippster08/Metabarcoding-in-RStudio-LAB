@@ -3,15 +3,11 @@
 # estimates to denoise reads, merge paired reads, and remove chimeric sequences
 
 ## Load Libraries ==============================================================
-# Load all R packages you may need if not coming directly from the previous step.
+# Load all R packages you may need.
 library(dada2)
 library(digest)
-library(phyloseq)
 library(tidyverse)
 library(seqinr)
-library(ape)
-library(DECIPHER)
-library(ade4)
 
 ## File Housekeeping ===========================================================
 
@@ -108,7 +104,7 @@ head(sample_names_gene1)
 # the orange lines are the quartiles (solid for median, dashed for 25% and 75%)
 # and the red line represents the proportion of reads existing at that position.
 qualplotF_gene1 <- plotQualityProfile(
-  fnFs_gene1[1:length(fnFs)],
+  fnFs_gene1[1:length(fnFs)], # nolint: seq_linter. # nolint: seq_linter.
   aggregate = TRUE
 )
 qualplotF_gene1
@@ -123,7 +119,7 @@ qualplotF_gene1 +
 
 # Examine the reverse reads as you did the forward.
 qualplotR_gene1 <- plotQualityProfile(
-  fnRs_gene1[1:length(fnRs)],
+  fnRs_gene1[1:length(fnRs)], # nolint: seq_linter.
   aggregate = TRUE
 )
 qualplotR_gene1
@@ -941,7 +937,8 @@ head(repseq_md5_asv_gene2)
 ## Export Sequence-Table with md5 Hash =========================================
 # This exports a sequence-table: columns of ASV's (shown as a md5 hash instead
 # of sequence), rows of samples, and values = number of reads. With this table
-# you will also need a file that relates each ASV to it's representative md5 hash. We download this in the next section.
+# you will also need a file that relates each ASV to it's representative md5
+# hash. We download this in the next section.
 
 write.table(
   seqtab_nochim_md5_gene2,
