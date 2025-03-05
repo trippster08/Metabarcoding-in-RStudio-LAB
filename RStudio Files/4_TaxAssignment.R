@@ -144,7 +144,7 @@ View(taxonomy_tb_md5)
 # Rearrange columns so that the md5 hash comes first, then the ASV, then each
 # classfication level followed by it's respective bootstrap column.
 # fmt: skip
-taxonomy_tb_md5 <- taxonomy_tb_md5[ , c(16,1,2,9,3,10,4,11,5,12,6,13,7,14,8,15)]
+taxonomy_tb_md5 <- taxonomy_tb_md5[, c(16,1,2,9,3,10,4,11,5,12,6,13,7,14,8,15)]
 View(taxonomy_tb_md5)
 
 # Export this table as a .tsv file. I name it with Project Name,
