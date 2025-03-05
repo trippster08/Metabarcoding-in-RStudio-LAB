@@ -30,13 +30,13 @@ setwd("/Users/smithb/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
 ### sequence-table -------------------------------------------------------------
 # Add md5 hash to the sequence-table from the DADA2 analysis. You may already
 # have this
-seqtab.nochim.md5 <- as.matrix(seqtab.nochim)
-colnames(seqtab.md5) <- repseq.project1.md5
-View(seqtab.md5)
+seqtab_nochim_md5 <- as.matrix(seqtab_nochim)
+colnames(seqtab_md5) <- repseq_project1_md5
+View(seqtab_md5)
 # Make phyloseq otu_table from the sequence-table (columns of ASV/OTUs, rows of
 # samples). If you want to use a feature-table (columns of samples, rows of
 # ASV/OTUs) instead, use "taxa_are_rows = TRUE"
-OTU.md5 <- otu_table(seqtab.nochim.md5, taxa_are_rows = FALSE) 
+OTU_md5 <- otu_table(seqtab_nochim_md5, taxa_are_rows = FALSE) 
 
 ### tax_table ------------------------------------------------------------------
 # Row headings for the tax_table should match the column headings in the
@@ -46,12 +46,12 @@ OTU.md5 <- otu_table(seqtab.nochim.md5, taxa_are_rows = FALSE)
 
 # Make a new taxonomy-only table, and replace the current rownames (ASVs) with
 # md5 hashes.
-taxonomy.tax.md5 <- taxonomy$tax
-row.names(taxonomy.tax.md5) = repseq.md5
-View(taxonomy.tax.md5)
+taxonomy_tax_md5 <- taxonomy$tax
+row.names(taxonomy_tax_md5) = repseq_md5
+View(taxonomy_tax_md5)
 
 # Make phyloseq tax-table from our taxonomy-only table.
-TAX.md5 <- tax_table(taxonomy.tax.md5)
+TAX_md5 <- tax_table(taxonomy_tax_md5)
 
 ### sample_data ----------------------------------------------------------------
 # Import metadata (here as a tab-delimited text file, see examples for
@@ -64,7 +64,7 @@ TAX.md5 <- tax_table(taxonomy.tax.md5)
 # looking at "seqtab.nochim", since this is where the phyloseq otu_table gets
 # its sample names from. Rename sample names in your metadata file you hope
 # to import to match those in "seqtab.nochim".
-rownames(seqtab.nochim)
+rownames(seqtab_nochim)
 
 # Import your metadata file. I usually use a tab-delimited file (sep = "\t"),
 # but you can also use a comma delimited metadata file (sep = ","). You need to
@@ -118,11 +118,11 @@ SAMPLE <- sample_data(metadata)
 # Make a new list of ASVs from the representative sequences, and add md5 hashes
 # as names.
 sequences <- repseq
-names (sequences) <- repseq.md5
+names(sequences) <- repseq.md5
 
 # Convert these sequences into a DNAString, which is the format of sequences
 # used by DECIPHER, and many other phylogenetic programs in R.
-sequences.dna <- DNAStringSet(sequences)
+sequences_dna <- DNAStringSet(sequences)
 
 # Align using DECIPHER. DECIPHER "Performs profile-to-profile alignment of
 # multiple unaligned sequences following a guide tree" (from the manual). We do
@@ -141,12 +141,12 @@ sequences.dna <- DNAStringSet(sequences)
 # convert DADA@DNA sequences into an RNAStringSet (i.e. 
 # "RNAStringSet(sequences)" will give you an error. You must first make a
 # DNAStringSet from "sequences".)
-sequences.rna <- RNAStringSet(sequences.dna)
+sequences_rna <- RNAStringSet(sequences_dna)
 
 # Make an alignment from your DNA or RNA data, and change "useStructures" 
 # accordingly.
-alignment.dna <- AlignSeqs(
-  sequences.dna,
+alignment_dna <- AlignSeqs(
+  sequences_dna,
   guideTree = NULL,
   anchor = NA,
   gapOpening = c(-15, -10),
@@ -159,16 +159,16 @@ alignment.dna <- AlignSeqs(
 )
 # Look at a brief "summary" of the alignment. This shows the alignment length,
 # the first 5 and last 5 ASVs and the first 50 and last 50 bps of the alignment.
-alignment.dna
+alignment_dna
 
 # You can also look at the entire alignment in your browser.
-BrowseSeqs(alignment.dna)
+BrowseSeqs(alignment_dna)
 
 # Create a reference sequence (refseq) object from the alignment. This contains
 # the ASV sequences, using the md5 hashes as names.
-REFSEQ.md5 <- DNAStringSet(alignment.dna, use.names = TRUE)
+REFSEQ_md5 <- DNAStringSet(alignment_dna, use.names = TRUE)
 # Look at the refseq object, just to make sure it worked
-head(REFSEQ.md5)
+head(REFSEQ_md5)
 
 ### phy_tree -------------------------------------------------------------------
 # We can create a phylogenetic (or at least, a phenetic) tree using the
@@ -176,7 +176,7 @@ head(REFSEQ.md5)
 
 # For ape, the aligned sequences must be in binary format (DNAbin, which reduces
 # the size of large datasets), so we first convert the DNAstring alignment.
-alignment.dnabin <- as.DNAbin(alignment.dna)
+alignment_dnabin <- as_DNAbin(alignment_dna)
 
 #Create pairwise distance matrix in ape. There are many different models to use.
 # Here we are using the Tamura Nei 93 distance measure. Turning the resulting
@@ -184,8 +184,8 @@ alignment.dnabin <- as.DNAbin(alignment.dna)
 # pairwise distances. Using "as.matrix = FALSE" results in a
 # distances are meaningless to look at, but either type can be used for
 # tree-building).
-pairwise.tn93 <- dist.dna(
-  alignment.dnabin,
+pairwise_tn93 <- dist_dna(
+  alignment_dnabin,
   model = "tn93",
   as.matrix = TRUE
 )
@@ -202,11 +202,11 @@ pairwise.tn93 <- dist.dna(
 # Check the number of NaNs in dist.dna, and the proportion of all distance. I
 # don't know how many NaNs are too many, but if there are more than a few, I
 # would prefer to be safe and use ml distances.
-length(is.nan(pairwise.tn93))
-length(pairwise.tn93)/length(is.nan(pairwise.tn93))
+length(is.nan(pairwise_tn93))
+length(pairwise_tn93)/length(is.nan(pairwise_tn93))
 
 #Install and load the phangorn library
-install.packages("phangorn")
+install# fmt: skippackages("phangorn")
 library(phangorn)
 # Obtain pairwise distances with the "dist.ml" command. It currently only has
 # two models of evolution: JC69 and F81.
