@@ -62,7 +62,7 @@ sapply(dir_names, dir.create, recursive = TRUE)
 # confirm. Basespace saves the reads in sample-specific folders, using
 # "recursive = TRUE" allows us to find all read files in the working directory
 raw_reads <- list.files(pattern = ".fastq.gz", recursive = TRUE)
-head(raw.reads)
+head(raw_reads)
 
 # Copy the read files to the "data/raw" directory, and confirm that they are
 # there.
