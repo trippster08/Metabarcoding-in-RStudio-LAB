@@ -123,6 +123,18 @@ for (i in seq_along(sample_names_raw)) {
     )
   )
 }
+# Save all the objects we've created so far so we don't have to create these
+# again down the road if we leave this project
+save(
+  reads_to_trim,
+  reads_to_trim_F,
+  reads_to_trim_R,
+  sample_names_raw,
+  sequence_counts_raw,
+  path_to_Fprimers,
+  path_to_Rprimers,
+  file = "data/working/1_trim.RData"
+)
 
 ### Run cutadapt WITH 3' trimming ----------------------------------------------
 # Run this if you have read-through in sequences. In other words, you may have
@@ -165,7 +177,7 @@ save(
   path_to_RprimersRC,
   file = "data/working/1_trim.RData"
 )
-
+## Parameter Descriptions ------------------------------------------------------
 # We are including our default parameters for cutadapt. You can change these
 # parameters if you have prefer others.
 

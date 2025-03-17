@@ -30,8 +30,16 @@ list.files(path_to_trimmed)
 
 # This creates two vectors. One contains the names for forward reads (R1, called
 # trimmed_F) and the other for reverse reads (R2, called trimmed_R).
-trimmed_F <- sort(list.files(path, pattern = "_R1.fastq.gz", full.names = TRUE))
-trimmed_R <- sort(list.files(path, pattern = "_R2.fastq.gz", full.names = TRUE))
+trimmed_F <- sort(list.files(
+  path_to_trimmed,
+  pattern = "_R1.fastq.gz",
+  full.names = TRUE
+))
+trimmed_R <- sort(list.files(
+  path_to_trimmed,
+  pattern = "_R2.fastq.gz",
+  full.names = TRUE
+))
 
 # Make sure you have the correct number of samples, and that they match the
 # number of sample names you made in the previous section (2a or 2b: Cutadapt).
@@ -154,7 +162,7 @@ save(
 # This creates files for the reads that will be quality filtered with dada2
 # in the next step.
 filtered_F <- file.path(
-  path,
+  path_to_trimmed,
   "filtered",
   paste0(
     sample_names_trimmed,
@@ -162,7 +170,7 @@ filtered_F <- file.path(
   )
 )
 filtered_R <- file.path(
-  path,
+  path_to_trimmed,
   "filtered",
   paste0(
     sample_names_trimmed,
@@ -211,7 +219,8 @@ filtered_summary <- filterAndTrim(
   rm.phix = TRUE,
   truncQ = 2,
   compress = TRUE,
-  multithread = TRUE
+  multithread = TRUE,
+  verbose = TRUE
 )
 
 # Usually we don't have that many samples, so I just look at "out" in its
