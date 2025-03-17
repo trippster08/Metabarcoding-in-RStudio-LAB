@@ -9,6 +9,7 @@ library(dada2)
 library(digest)
 library(tidyverse)
 library(seqinr)
+library(ShortRead)
 
 ## File Housekeeping ===========================================================
 
@@ -22,26 +23,36 @@ setwd(
 )
 
 # Set a path to the directory with the cutadapt-trimmed reads.
-path <- "data/working/trimmed_sequences"
+path_to_trimmed <- "data/working/trimmed_sequences"
 
 # This lists the files inside the selected folder.
-list.files(path)
+list.files(path_to_trimmed)
 
 # This creates two vectors. One contains the names for forward reads (R1, called
-# fnFs) and the other for reverse reads (R2, called fnRs).
-fnFs <- sort(list.files(path, pattern = "_R1.fastq.gz", full.names = TRUE))
-fnRs <- sort(list.files(path, pattern = "_R2.fastq.gz", full.names = TRUE))
+# trimmed_F) and the other for reverse reads (R2, called trimmed_R).
+trimmed_F <- sort(list.files(path, pattern = "_R1.fastq.gz", full.names = TRUE))
+trimmed_R <- sort(list.files(path, pattern = "_R2.fastq.gz", full.names = TRUE))
 
 # Make sure you have the correct number of samples, and that they match the
 # number of sample names you made in the previous section (2a or 2b: Cutadapt).
-length(fnFs)
-length(fnRs)
-length(sample_names)
+length(trimmed_F)
+length(trimmed_R)
 
-# Make sure all sample files contain reads. Samples with size of 50 bytes or
-# below do not have any reads, and this will break the pipeline later if these
-# samples are not removed.
-file.size(fnFs)
+# Make a new vector of sample names from your trimmed reads.
+sample_names_trimmed <- sapply(strsplit(basename(trimmed_F), "_"), `[`, 1)
+head(sample_names_trimmed)
+length(sample_names_trimmed)
+
+# Now count the number of reads in each trimmed sample. Since cutadapt only
+# keeps paired reads, we only need to count forward samples.
+sequence_counts_trimmed <- sapply(trimmed_F, function(file) {
+  fastq_data <- readFastq(file)
+  length(fastq_data)
+})
+names(sequence_counts_trimmed) <- sample_names_trimmed
+print(sequence_counts_trimmed)
+# Look at this
+sequence_counts_trimmed
 
 # If you have sample files with no reads, you must remove both the forward and
 # reverse reads, regardless if one has reads (although if one is empty,
@@ -50,100 +61,120 @@ file.size(fnFs)
 ### Remove empty sample files --------------------------------------------------
 # This saves the R1 fastq for the sample file only if both the R1 and R2 sample
 # files have reads.
-fnFs_exists <- fnFs[file.size(fnFs) > 50 & file.size(fnRs) > 50]
-length(fnFs_exists)
+trimmed_F_exists <- trimmed_F[
+  file.size(trimmed_F) > 50 & file.size(trimmed_R) > 50
+]
+length(trimmed_F_exists)
 
 # This saves the R2 fastq for the sample file only if both the R1 and R2 sample
 # files have reads.
-fnRs_exists <- fnRs[file.size(fnFs) > 50 & file.size(fnRs) > 50]
-length(fnRs_exists)
-file.size(fnFs_exists)
+trimmed_R_exists <- trimmed_R[
+  file.size(trimmed_F) > 50 & file.size(trimmed_R) > 50
+]
+length(trimmed_R_exists)
+file.size(trimmed_F_exists)
 
-# Redefine fnFs and fnRs as only the existing read files, and check
-fnFs <- fnFs_exists
-fnRs <- fnRs_exists
-length(fnFs)
-length(fnRs)
-file.size(fnFs)
+# Redefine trimmed_F and trimmed_R as only the existing read files, and check
+trimmed_F <- trimmed_F_exists
+trimmed_R <- trimmed_R_exists
+length(trimmed_F)
+length(trimmed_R)
+file.size(trimmed_F)
 
 # Update your samples names
-sample_names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
-length(sample_names)
-head(sample_names)
+sample_names_trimmed <- sapply(strsplit(basename(trimmed_F), "_"), `[`, 1)
+length(sample_names_trimmed)
+head(sample_names_trimmed)
 
 ## Filter and Trim =============================================================
 
 # This visualizes the quality plots. If you want to look at quality plots for
 # each individual sample, use "aggregate = FALSE", and include whichever sample
-# number you want in the square brackets. For example, "fnFs[1:2]"
+# number you want in the square brackets. For example, "trimmed_F[1:2]"
 # will result in two plots, one for the first sample and one for the second.
-# "fnFs[1:17]" will result in 17 plots, one for the first 17 samples sample.
-# Using "aggregate = TRUE" will combine any samples called (for example,
-# "fnFS[1:17]" aggregates sample 1 through 17) into a single plot. This results
-# in the same the quality plots as Qiime2.
+# "trimmed_F[1:17]" will result in 17 plots, one for the first 17 samples.
+# Using "aggregate = TRUE" will combine any samples called.
 
 # For these plots, the green line is the mean quality score at that position,
 # the orange lines are the quartiles (solid for median, dashed for 25% and 75%)
 # and the red line represents the proportion of reads existing at that position.
-qualplotF <- plotQualityProfile(
-  fnFs[1:length(sample_names)], # nolint: seq_linter. # nolint: seq_linter.
+quality_plot_F <- plotQualityProfile(
+  trimmed_F[1:length(sample_names_trimmed)],
   aggregate = TRUE
 )
-qualplotF
+quality_plot_F
+
+# Export this plot as a pdf.
+ggsave(
+  "data/results/quality_plot_F.pdf",
+  plot = quality_plot_F,
+  width = 9,
+  height = 9
+)
 
 # Here we modify our quality plot to better visualize where the quality cut-off
 # should be. "Scale_x_continuous" is the minimum and maximum x-axis values to be
 # shown.  We use "breaks=seq(a,b,c)", to indicate the first axis tick "a", last
 # tick "b", and frequency of ticks "c". The example shown results in a plot that
 # starts at 250 bp, ends at 290 bp, and has axis ticks every 5 bp.
-qualplotF + scale_x_continuous(limits = c(250, 290), breaks = seq(250, 290, 5))
-
-ggsave(
-  "data/results/qualplotF.pdf",
-  plot = qualplotF,
-  width = 9,
-  height = 9
-)
+quality_plot_F +
+  scale_x_continuous(limits = c(250, 290), breaks = seq(250, 290, 5))
 
 # Examine the reverse reads as you did the forward.
-qualplotR <- plotQualityProfile(
-  fnRs[1:length(sample_names)], # nolint: seq_linter.
+quality_plot_R <- plotQualityProfile(
+  trimmed_R[1:length(sample_names_trimmed)],
   aggregate = TRUE
 )
-qualplotR
-qualplotR + scale_x_continuous(limits = c(250, 290), breaks = seq(250, 290, 5))
+quality_plot_R
 
+# Export this plot as a pdf.
 ggsave(
-  "data/results/qualplotR.pdf",
-  plot = qualplotR,
+  "data/results/quality_plot_R.pdf",
+  plot = quality_plot_R,
   width = 9,
   height = 9
 )
+
+quality_plot_R +
+  scale_x_continuous(limits = c(250, 290), breaks = seq(250, 290, 5))
+
+# Save all the objects created to this point in this section
+save(
+  path_to_trimmed,
+  trimmed_F,
+  trimmed_R,
+  sequence_counts_trimmed,
+  sample_names_trimmed,
+  quality_plot_F,
+  quality_plot_R,
+  file = "data/working/2_qual.Rdata"
+)
+
 
 # This creates files for the reads that will be quality filtered with dada2
 # in the next step.
-filtFs <- file.path(
+filtered_F <- file.path(
   path,
   "filtered",
   paste0(
-    sample_names,
+    sample_names_trimmed,
     "_F_filt.fastq.gz"
   )
 )
-filtRs <- file.path(
+filtered_R <- file.path(
   path,
   "filtered",
   paste0(
-    sample_names,
+    sample_names_trimmed,
     "_R_filt.fastq.gz"
   )
 )
 
 # This inserts sample names to these newly created files. You'll notice that in
-# the environment pane, the description of filtFs and filtRs goes from
+# the environment pane, the description of filtered_F and filtered_R goes from
 # "chr [1:N]" to "Named chr [1:N]"
-names(filtFs) <- sample_names
-names(filtRs) <- sample_names
+names(filtered_F) <- sample_names_trimmed
+names(filtered_R) <- sample_names_trimmed
 
 # This filters all reads depending upon the quality (as assigned by the user)
 # and trims the ends off the reads for all samples as determined by the quality
@@ -154,8 +185,8 @@ names(filtRs) <- sample_names
 # to multithread = FALSE, because "error messages and tracking are not handled
 # gracefully when using the multithreading functionality".
 
-# "truncLen=c(i,j)" is how you tell Dada2 where to truncate all forward (i) and
-# reverse (j) reads. Using "0" means reads will not be truncated.
+# "truncLen=c(X,Y)" is how you tell Dada2 where to truncate all forward (X) and
+# reverse (Y) reads. Using "0" means reads will not be truncated.
 # maxEE sets how many expected errors are allowed before a read is filtered out.
 
 # The amount to truncate is a common question, and very unsettled. I usually
@@ -169,12 +200,12 @@ names(filtRs) <- sample_names
 # very low quality reads. However, increasing maxEE does increase computational
 # time.
 
-out <- filterAndTrim(
-  fnFs,
-  filtFs,
-  fnRs,
-  filtRs,
-  truncLen = c(0, 0),
+filtered_summary <- filterAndTrim(
+  trimmed_F,
+  filtered_F,
+  trimmed_R,
+  filtered_R,
+  truncLen = c(X, Y),
   maxN = 0,
   maxEE = c(4, 4),
   rm.phix = TRUE,
@@ -185,13 +216,39 @@ out <- filterAndTrim(
 
 # Usually we don't have that many samples, so I just look at "out" in its
 # entirety, but if there are lots of samples, just look at the first 6.
-out
-#head(out)
+filtered_summary
+head(filtered_summary)
+
+# After filtering, if you have any samples with no reads, you much remove them.
+# This step changes filtered_F and filtered_R to only contain the names of
+# samples with reads. Do this only if there are samples in
+# "filtered_summary" with zero reads.
+exists <- file.exists(filtered_F) & file.exists(filtered_R)
+exists
+filtered_F <- filtered_F[exists]
+filtered_R <- filtered_R[exists]
+
+# Set a path to the directory with the dada2-filtered reads.
+path_to_filtered <- "data/working/trimmed_sequences/filtered"
+
+# Get sample names for filtered reads
+sample_names_filtered <- sapply(strsplit(basename(filtered_F), "_"), `[`, 1)
+sample_names_filtered
+
+# Count how many reads remain in each sample after filtering
+sequence_counts_filtered <- sapply(filtered_F, function(file) {
+  fastq_data <- readFastq(file)
+  length(fastq_data)
+})
+
+# Name the counts with sample names
+names(sequence_counts_filtered) <- sample_names_filtered
+sequence_counts_filtered
 
 # Export out as a tsv
 write.table(
-  out,
-  file = "data/results/filtered_reads.tsv",
+  filtered_summary,
+  file = "data/results/filtered_read_count.tsv",
   quote = FALSE,
   sep = "\t",
   row.names = TRUE,
@@ -200,45 +257,22 @@ write.table(
 
 # Save all the objects created to this point
 save(
-  path,
-  truncF,
-  truncR,
-  fnFs,
-  fnRs,
-  sample_names,
-  qualplotF,
-  qualplotR,
-  filtFs,
-  filtRs,
-  out,
+  path_to_filtered,
+  filtered_F,
+  filtered_R,
+  filtered_summary,
+  sample_names_filtered,
+  sequence_counts_filtered,
   file = "data/working/out.Rdata"
 )
-
-# After filtering, if there are any samples that have no remaining reads
-# (i.e. reads.out = 0), you will get the following error running learnErrors:
-# "Error in derepFastq(fls[[i]], qualityType = qualityType) : Not all provided
-# files exist." That is because while these empty sample names still exist in
-# filtFs and filtRs, there is no data connected to these names, and dada2
-# doesn't like that.
-
-# This step changes filtFs and filtRs to only contain the names of samples with
-# reads. Do this only if there are samples in "out" with zero reads.
-exists <- file.exists(filtFs) & file.exists(filtRs)
-exists
-filtFs <- filtFs[exists]
-filtRs <- filtRs[exists]
-
-# You will notice that the number of items in filtFs is now the number of
-# samples with reads (i.e. the description for filtFs and filtRs goes from
-# "Named chr [1:N]" to "Named chr [1:N-(# of empty samples)]).
 
 ## Estimating Error Rates and Denoising ========================================
 
 # Here we use a portion of the data to determine error rates. These error rates
 # will be used in the next (denoising) step to narrow down the sequences to a
 # reduced and corrected set of unique sequences
-errF <- learnErrors(
-  filtFs,
+errors_F <- learnErrors(
+  filtered_F,
   nbases = 1e+08,
   errorEstimationFunction = loessErrfun,
   multithread = TRUE,
@@ -249,8 +283,8 @@ errF <- learnErrors(
   verbose = FALSE
 )
 
-errR <- learnErrors(
-  filtRs,
+errors_R <- learnErrors(
+  filtered_R,
   nbases = 1e+08,
   errorEstimationFunction = loessErrfun,
   multithread = TRUE,
@@ -269,10 +303,11 @@ errR <- learnErrors(
 # to look at here are to make sure that each black line is a good fit to the
 # observed error rates, and that estimated error rates decrease with increased
 # quality.
-error_plots_F <- plotErrors(errF, nominalQ = TRUE)
+error_plots_F <- plotErrors(errors_F, nominalQ = TRUE)
 error_plots_F
-error_plots_R <- plotErrors(errR, nominalQ = TRUE)
+error_plots_R <- plotErrors(errors_R, nominalQ = TRUE)
 error_plots_R
+# Export both plots as pdfs
 ggsave(
   "data/results/errorplotsF.pdf",
   plot = error_plots_F,
@@ -286,13 +321,22 @@ ggsave(
   height = 9
 )
 
+# Save the objects created since filtered_summary
+save(
+  errors_F,
+  errors_R,
+  error_plots_F,
+  error_plots_R,
+  file = "data/working/4_errors.Rdata"
+)
+
 # This applies the "core sample inference algorithm" (i.e. denoising) in dada2
 # to get corrected unique sequences. The two main inputs are the first, which is
-# the filtered sequences (filtFs), and "err =" which is the error file from
+# the filtered sequences (filtered_F), and "err =" which is the error file from
 # learnErrors (effF).
-dadaFs <- dada(
-  filtFs,
-  err = errF,
+denoised_F <- dada(
+  filtered_F,
+  err = errors_F,
   errorEstimationFunction = loessErrfun,
   selfConsist = FALSE,
   pool = FALSE,
@@ -300,9 +344,9 @@ dadaFs <- dada(
   verbose = TRUE
 )
 
-dadaRs <- dada(
-  filtRs,
-  err = errR,
+denoised_R <- dada(
+  filtered_R,
+  err = errors_R,
   errorEstimationFunction = loessErrfun,
   selfConsist = FALSE,
   pool = FALSE,
@@ -313,25 +357,21 @@ dadaRs <- dada(
 # This looks at the dada-class list of objects that was created by the "dada"
 # command. It gives a brief summary of the denoising results, and gives some
 # parameters values used.
-dadaFs[[1]]
-dadaRs[[1]]
+denoised_F[[1]]
+denoised_R[[1]]
 
-# Save all the objects created between out and here
+# Save both the objects created in the denoising step
 save(
-  filtFs,
-  filtRs,
-  errF,
-  errR,
-  dadaFs,
-  dadaRs,
-  file = "data/working/denoise.RData"
+  denoised_F,
+  denoised_R,
+  file = "data/working/5_denoise.RData"
 )
 
 ## Merge Paired Sequences ======================================================
 
 # Here we merge the paired reads. merged calls for the forward denoising result
-# (dadaFs), then the forward filtered and truncated reads (filtFs), then the
-# same for the reverse reads (dadaRs and filtRs).
+# (denoised_F), then the forward filtered and truncated reads (filtered_F), then the
+# same for the reverse reads (denoised_R and filtered_R).
 
 # You can change the minimum overlap (minOverlap), and the number of mismatches
 # that are allowed in the overlap region (maxMismatch). Default values are
@@ -341,11 +381,11 @@ save(
 # "...each unique pairing of forward/reverse denoised sequences." The data.frame
 # also contains multiple columns describing data for each unique merged
 # sequence.
-merged <- mergePairs(
-  dadaFs,
-  filtFs,
-  dadaRs,
-  filtRs,
+merged_reads <- mergePairs(
+  denoised_F,
+  filtered_F,
+  denoised_R,
+  filtered_R,
   minOverlap = 12,
   maxMismatch = 0,
   verbose = TRUE
@@ -353,8 +393,8 @@ merged <- mergePairs(
 
 # Inspect the merged sequences from the data.frame of the first sample (and the
 # 6th sample).
-head(merged[[1]])
-head(merged[[6]])
+head(merged_reads[[1]])
+head(merged_reads[[6]])
 
 ## Create Sequence-Table =======================================================
 
@@ -365,7 +405,7 @@ head(merged[[6]])
 # transpose this table if needed later (and we will later). I think for now, I
 # will use "sequence-table" for the table with columns of sequences, and
 # "feature-table" for tables with columns of samples.
-seqtab <- makeSequenceTable(merged)
+seqtab <- makeSequenceTable(merged_reads)
 # This describes the dimensions of the table just made
 dim(seqtab)
 
@@ -386,7 +426,6 @@ dim(seqtab_nochim)
 # at them later
 chimeras_list <- isBimeraDenovoTable(
   seqtab,
-  method = "consensus",
   multithread = TRUE,
   verbose = TRUE
 )
@@ -410,6 +449,8 @@ write.fasta(
 # This shows the length of the representative sequences (ASV's). Typically,
 # there are a lot of much longer and much shorter sequences.
 seq_length_table <- table(nchar(getSequences(seqtab_nochim)))
+# Look at the table
+seq_length_table
 # Export this table as a .tsv
 write.table(
   seq_length_table,
@@ -438,42 +479,83 @@ table(nchar(getSequences(seqtab_nochim_313)))
 ## Track Reads Through Dada2 Process ===========================================
 
 # Here, we look at how many reads made it through each step. This is similar to
-# the stats table that we look at in Qiime2. I've added a column to the typical
-# tutorial version of this that gives us the percentage of reads that made it
-# through the process. This is a good quick way to see if something is wrong
-# (i.e. only a small proportion make it through).
+# the stats table that we look at in Qiime2.This is a good quick way to see if
+# something is wrong (i.e. only a small proportion make it through).
+
+# First let remind ourselves what the other sequence count objects look like
+sequence_counts_raw
+sequence_counts_trimmed
+sequence_counts_filtered
+
+# Now lets make a table for the post-filtered samples, including denoised,
+# merged, and non-chimeric read counts
 getN <- function(x) sum(getUniques(x))
-track <- cbind(
-  out,
-  sapply(dadaFs, getN),
-  sapply(dadaRs, getN),
-  sapply(merged, getN),
-  rowSums(seqtab_nochim),
-  100 * (rowSums(seqtab_nochim) / out[, 1])
-)
+sequence_counts_postfiltered <- as_tibble(
+  cbind(
+    sapply(denoised_F, getN),
+    sapply(denoised_R, getN),
+    sapply(merged_reads, getN),
+    rowSums(seqtab_nochim)
+  ),
+  .name_repair = "unique"
+) %>%
+  mutate(Sample_ID = sample_names_filtered) %>%
+  select(
+    Sample_ID,
+    Denoised_Reads_F = ...1,
+    Denoised_Reads_R = ...2,
+    Merged_Reads = ...3,
+    Non_Chimeras = ...4
+  )
 
+# Lets look at these to make sure it makes sense
+head(sequence_counts_postfiltered)
 
-sample_names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
-# If processing a single sample, remove the sapply calls: e.g. replace
-# sapply(dadaFs, getN) with getN(dadaFs)
-colnames(track) <- c(
-  "input",
-  "filtered",
-  "denoisedF",
-  "denoisedR",
-  "merged",
-  "nonchim",
-  "%kept"
-)
-rownames(track) <- sample_names
+# Finally, we are going to put all this read count information together in one
+# large table
+track_reads <- tibble(
+  sequence_counts_raw,
+  Sample_ID = names(sequence_counts_raw)
+) %>%
+  left_join(
+    tibble(sequence_counts_trimmed, Sample_ID = names(sequence_counts_trimmed)),
+    join_by(Sample_ID)
+  ) %>%
+  left_join(
+    tibble(
+      sequence_counts_filtered,
+      Sample_ID = names(sequence_counts_trimmed)
+    ),
+    join_by(Sample_ID)
+  ) %>%
+  left_join(
+    sequence_counts_postfiltered,
+    join_by(Sample_ID)
+  ) %>%
+  mutate(Proportion_Kept = Non_Chimeras / sequence_counts_raw) %>%
+  select(Sample_ID, everything()) %>%
+  select(
+    Sample_ID,
+    Raw_Reads = sequence_counts_raw,
+    Trimmed_Reads = sequence_counts_trimmed,
+    Filtered_Reads = sequence_counts_filtered,
+    everything()
+  )
+
 
 # Look at the results for the first 6 samples, or all, depending upon the number
 # of samples.
-head(track)
-track
-# !!!!!!!Note, if the initial Filter and Trim step left any samples with 0
-# reads, and you had to use the file.exists command, it will cause a problem
-# tracking reads. I'm working on it.
+head(track_reads)
+track_reads
+
+# Export this table as a .tsv
+write.table(
+  track_reads,
+  file = "data/results/track_reads_table.tsv",
+  quote = FALSE,
+  sep = "\t",
+  row.names = FALSE
+)
 
 ## Export Sequence-Table =======================================================
 # This exports a sequence-table: columns of ASV's, rows of samples, and
@@ -577,14 +659,14 @@ colnames(seqtab_nochim_transpose_md5)
 
 # Save all the objects created between denoise and here
 save(
-  merged,
+  merged_reads,
   seqtab,
   seqtab_nochim,
   chimeras_list,
   repseq_all,
   repseq_chimera,
   getN,
-  track,
+  track_reads,
   seq_length_table,
   repseq_nochim,
   repseq_nochim_md5,
@@ -602,7 +684,7 @@ save(
 
 write.table(
   seqtab_nochim_transpose_md5,
-  file = "data/results/PROJECTNAME_sequence-table_md5.tsv",
+  file = "data/results/PROJECTNAME_feature-table_md5.tsv",
   quote = FALSE,
   sep = "\t",
   row.names = TRUE,
@@ -627,7 +709,7 @@ write.fasta(
 # table.
 write.table(
   repseq_nochim_md5_asv,
-  file = "data/results/PROJECTNAME_representative_sequence_table_md5.tsv",
+  file = "data/results/PROJECTNAME_representative_sequence_md5_table.tsv",
   quote = FALSE,
   sep = "\t",
   row.names = FALSE
