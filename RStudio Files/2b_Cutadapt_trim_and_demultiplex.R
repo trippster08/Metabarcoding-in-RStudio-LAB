@@ -38,6 +38,18 @@ reads_to_trim_R <- reads_to_trim[str_detect(reads_to_trim, "R2_001.fastq.gz")]
 sample_names_raw <- sapply(strsplit(basename(reads_to_trim_F), "_"), `[`, 1)
 head(sample_names_raw)
 
+# Count the number of reads in each sample.
+sequence_counts_raw <- sapply(
+  paste0("data/raw/", reads_to_trim_F),
+  function(file) {
+    fastq_data <- readFastq(file)
+    length(fastq_data)
+  }
+)
+# Name these counts with your sample names
+names(sequence_counts_raw) <- sample_names_raw
+head(sequence_counts_raw)
+
 # Define the path to your primer definition fasta file, if you have more than
 # one potential primer to trim. This path will be different for each user.
 
