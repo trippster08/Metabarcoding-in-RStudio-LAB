@@ -135,6 +135,7 @@ save(
   taxonomy,
   taxonomy_rdp,
   file = "data/working/tax_rdp.RData"
+)
 # Export this table as a .tsv file. I name it with Project Name,
 # the reference library used, and taxonomy.
 
