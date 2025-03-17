@@ -58,7 +58,6 @@ sequence_counts_trimmed <- sapply(trimmed_F, function(file) {
   length(fastq_data)
 })
 names(sequence_counts_trimmed) <- sample_names_trimmed
-print(sequence_counts_trimmed)
 # Look at this
 sequence_counts_trimmed
 
@@ -533,7 +532,7 @@ track_reads <- tibble(
   left_join(
     tibble(
       sequence_counts_filtered,
-      Sample_ID = names(sequence_counts_trimmed)
+      Sample_ID = names(sequence_counts_filtered)
     ),
     join_by(Sample_ID)
   ) %>%
@@ -615,7 +614,7 @@ head(repseq_nochim)
 # Use the program digest (in a For Loop) to create a new vector containing the
 # unique md5 hashes of the representative sequences (ASV's). This results in
 # identical feature names to those assigned in Qiime2.
-repseq_md5 <- c()
+repseq_nochim_md5 <- c()
 for (i in seq_along(repseq_nochim)) {
   repseq_nochim_md5[i] <- digest(
     repseq_nochim[i],
