@@ -7,14 +7,13 @@
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
 }
-# Install Dada2. You may get an error telling you to install a different version
-# of Dada2. Change "3.17" to whatever version RStudio tells you.
-BiocManager::install("dada2", version = "3.17")
-# Install the rest of the libraries needed through BiocManager.
-BiocManager::install("phyloseq")
-BiocManager::install("msa")
-BiocManager::install("DECIPHER")
-BiocManager::install("rBLAST")
+# Install all of the libraries needed through BiocManager.
+BiocManager::install("dada2", ask = FALSE)
+BiocManager::install("phyloseq", ask = FALSE)
+BiocManager::install("msa", ask = FALSE)
+BiocManager::install("DECIPHER", ask = FALSE)
+BiocManager::install("rBLAST", ask = FALSE)
+BiocManager::install("rBLAST", ask = FALSE)
 
 # Install and other libraries you may need (or install through
 # "Install Packages" window). Libraries will only need to be installed once.
@@ -27,10 +26,15 @@ install.packages("ape")
 install.packages("vegan")
 install.packages("patchwork")
 install.packages("remotes")
-remotes::install_github("ropensci/bold")
-remotes::install_github("ropensci/taxize")
-remotes::install_github("fkeck/refdb")
-remotes::install_github("tobiasgf/lulu")
+install.packages("R.utils")
+install.packages("phylotools")
+install.packages("data.table")
+remotes::install_github("ropensci/bold", upgrade = TRUE)
+remotes::install_github("ropensci/taxize", upgrade = TRUE)
+remotes::install_github("fkeck/refdb", upgrade = TRUE)
+remotes::install_github("tobiasgf/lulu", upgrade = TRUE)
+remotes::install_github("boldsystems-central/BOLDconnectR", upgrade = TRUE)
+install.packages("rMSA", repos = "https://mhahsler.r-universe.dev")
 
 ## File Housekeeping ===========================================================
 # Set up your working directory. If you created your new project in the
