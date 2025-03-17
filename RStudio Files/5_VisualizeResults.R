@@ -46,7 +46,7 @@ asv_count_plot
 # We can also plot number of reads for each sample versus number of ASVs for
 # each sample.
 # First, we need to join our asv count table with our read count table
-read_count_asv_count <-  left_join(
+read_count_asv_count <- left_join(
   read_count,
   asv_count,
   by = join_by(Sample_ID)
@@ -88,7 +88,7 @@ asv_rarefied_plot
 # Now lets add this expected_ASV column to our table already containg both the
 # reads counts and ASV counts.
 
-read_count_asv_count_expected_asv <-  left_join(
+read_count_asv_count_expected_asv <- left_join(
   read_count_asv_count,
   asv_count_rarefied,
   by = join_by(Sample_ID)
@@ -120,7 +120,7 @@ shannon_sample <- enframe(shannon) %>%
     Sample_ID = name,
     shannon = value
   )
-# And plot them  
+# And plot them
 shannon_plot <- ggplot(shannon_sample, aes(x = Sample_ID, y = shannon)) +
   geom_bar(stat = "identity") +
   scale_y_continuous(labels = scales::comma) +
@@ -219,7 +219,7 @@ asv_rarefied_plot <- ggplot(
   scale_y_continuous(labels = scales::comma) +
   scale_x_discrete(
     labels = read_count_asv_count_expected_asv_meta$Sample_ID,
-    guide = guide_axis(angle=90)
+    guide = guide_axis(angle = 90)
   )
 asv_rarefied_plot
 
@@ -232,9 +232,8 @@ read_count_asv_count_meta_plot <- ggplot(
 ) +
   geom_point(
     size = 4,
-    aes(fill = depth_ft,
-    color = depth_ft,
-    shape = fraction)) +
+    aes(fill = depth_ft, color = depth_ft, shape = fraction)
+  ) +
   scale_x_continuous(labels = scales::comma)
 read_count_asv_count_meta_plot
 
@@ -297,7 +296,7 @@ rarecurve_df_meta_plot <- ggplot(rarecurve_df_meta) +
     ),
     linewidth = 0.75
   ) +
-  scale_linetype_manual(values = c("solid", "dashed", "dotted", "dotdash")) 
+  scale_linetype_manual(values = c("solid", "dashed", "dotted", "dotdash"))
 rarecurve_df_meta_plot
 
 # We need to group by Sample_ID, so each sample will form a separate line.
@@ -312,8 +311,8 @@ rarecurve_df_meta_plot <- ggplot(rarecurve_df_meta) +
     ),
     linewidth = 0.75
   ) +
-  scale_linetype_manual(values = c("solid", "dashed", "dotted", "dotdash")) 
-rarecurve_df_meta_plot 
+  scale_linetype_manual(values = c("solid", "dashed", "dotted", "dotdash"))
+rarecurve_df_meta_plot
 
 # Add an upper limit to the x-axis (reads) to see the expected number of ASVs
 # found in each sample with read depth equal to the sample with the least
@@ -345,7 +344,7 @@ nmds <- metaMDS(seqtab_nochim_md5, k = 2, distance = "bray")
 # You can use vegan to plot this, but like the rarefaction plot, it is limited
 # in what you can do, so I convert this to nmds scores that are plotable. A lot
 # of the plots in this section was greatly helped by these websites:
-# https://jkzorz.github.io/ and 
+# https://jkzorz.github.io/ and
 # https://eddatascienceees.github.io/tutorial-rayrr13/
 nmds_scores <- as_tibble(scores(nmds)$sites, rownames = "Sample_ID")
 # Add your metadata to this new table
@@ -361,11 +360,10 @@ head(nmds_scores_meta)
 nmds_scores_meta_plot <- ggplot(nmds_scores_meta, aes(x = NMDS1, y = NMDS2)) +
   geom_point(size = 4, aes(fill = depth_ft, color = depth_ft, shape = fraction))
 nmds_scores_meta_plot
-# I want 
+# I want
 # define hidden vegan function that finds coordinates for drawing a covariance ellipse
-veganCovEllipse<-function (cov, center = c(0, 0), scale = 1, npoints = 100)
-{
-  theta <- (0:npoints) * 2 * pi/npoints
+veganCovEllipse <- function(cov, center = c(0, 0), scale = 1, npoints = 100) {
+  theta <- (0:npoints) * 2 * pi / npoints
   Circle <- cbind(cos(theta), sin(theta))
   t(center + scale * t(Circle %*% chol(cov)))
 }
@@ -378,13 +376,15 @@ veganCovEllipse<-function (cov, center = c(0, 0), scale = 1, npoints = 100)
 anosim_depth <- anosim(
   x = seqtab_nochim_md5,
   grouping = read_count_asv_count_expected_asv_meta$depth_ft,
-  permutations = 9999, distance = "bray"
+  permutations = 9999,
+  distance = "bray"
 )
 anosim_depth
 # Then, looking at fraction
 anosim_fraction <- anosim(
   x = seqtab_nochim_md5,
   grouping = read_count_asv_count_expected_asv_meta$fraction,
-  permutations = 9999, distance = "bray"
+  permutations = 9999,
+  distance = "bray"
 )
 anosim_fraction
