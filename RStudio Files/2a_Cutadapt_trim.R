@@ -101,6 +101,7 @@ cutadapt_binary <- "/Users/macdonaldk/mambaforge/envs/cutadapt/bin/cutadapt"
 ### Run cutadapt no 3' trimming ------------------------------------------------
 # Run this if you have no read-through in sequences. In other words, you should
 # not find any primers on the 3' end of the sequence
+# fmt: skip
 for (i in seq_along(sample_names_raw)) {
   system2(
     cutadapt_binary,
@@ -126,27 +127,21 @@ for (i in seq_along(sample_names_raw)) {
 ### Run cutadapt WITH 3' trimming ----------------------------------------------
 # Run this if you have read-through in sequences. In other words, you may have
 # primers on the 3' end of reads
+# fmt: skip
 for (i in seq_along(sample_names_raw)) {
   system2(
     cutadapt_binary,
     args = c(
       "-e 0.2 --discard-untrimmed --minimum-length 30 -n 2 -O 3 --cores=0",
-      "-g",
-      paste0("file:", path_to_Fprimers),
-      "-a",
-      paste0("file:", path_to_RprimersRC),
-      "-G",
-      paste0("file:", path_to_Rprimers),
-      "-A",
-      paste0("file:", path_to_FprimersRC),
-      "-o",
-      paste0(
+      "-g", paste0("file:", path_to_Fprimers),
+      "-a", paste0("file:", path_to_RprimersRC),
+      "-G", paste0("file:", path_to_Rprimers),
+      "-A", paste0("file:", path_to_FprimersRC),
+      "-o", paste0(
         "data/working/trimmed_sequences/",
         sample_names_raw[i],
         "_trimmed_R1.fastq.gz"
-      ),
-      "-p",
-      paste0(
+      ), "-p", paste0(
         "data/working/trimmed_sequences/",
         sample_names_raw[i],
         "_trimmed_R2.fastq.gz"
