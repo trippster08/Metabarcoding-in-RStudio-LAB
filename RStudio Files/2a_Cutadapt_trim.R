@@ -98,7 +98,7 @@ cutadapt_binary <- "/Users/macdonaldk/mambaforge/envs/cutadapt/bin/cutadapt"
 # "-G ^REVERSEPRIMERSEQUENCE" in quotations, followed by a comma.
 # fmt: skip
 
-### Run cutadapt no 3' trimming ------------------------------------------------
+### Run cutadapt NO 3' trimming ------------------------------------------------
 # Run this if you have no read-through in sequences. In other words, you should
 # not find any primers on the 3' end of the sequence
 # fmt: skip
