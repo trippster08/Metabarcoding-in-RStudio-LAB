@@ -113,7 +113,7 @@ quality_plot_F
 
 # Export this plot as a pdf.
 ggsave(
-  "data/results/quality_plot_F.pdf",
+  paste0("data/results/", project_name, "_quality_plot_F.pdf"),
   plot = quality_plot_F,
   width = 9,
   height = 9
@@ -136,7 +136,7 @@ quality_plot_R
 
 # Export this plot as a pdf.
 ggsave(
-  "data/results/quality_plot_R.pdf",
+  paste0("data/results/", project_name, "_quality_plot_R.pdf"),
   plot = quality_plot_R,
   width = 9,
   height = 9
@@ -256,7 +256,7 @@ sequence_counts_filtered
 # Export out as a tsv
 write.table(
   filtered_summary,
-  file = "data/results/filtered_read_count.tsv",
+  file = paste0("data/results/", project_name, "filtered_read_count.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = TRUE,
@@ -317,13 +317,13 @@ error_plots_R <- plotErrors(errors_R, nominalQ = TRUE)
 error_plots_R
 # Export both plots as pdfs
 ggsave(
-  "data/results/errorplotsF.pdf",
+  paste0("data/results/", project_name, "errorplots_F.pdf"),
   plot = error_plots_F,
   width = 9,
   height = 9
 )
 ggsave(
-  "data/results/errorplotsR.pdf",
+  paste0("data/results/", project_name, "errorplots_R.pdf"),
   plot = error_plots_R,
   width = 9,
   height = 9
@@ -449,7 +449,7 @@ write.fasta(
   names = repseq_chimera,
   open = "w",
   as.string = FALSE,
-  file.out = "data/results/rep-seq_chimeras.fas"
+  file.out = past0("data/results/", project_name, "rep-seq_chimeras.fas")
 )
 
 ## Examine Sequence Lengths and Trim ===========================================
@@ -462,7 +462,7 @@ seq_length_table
 # Export this table as a .tsv
 write.table(
   seq_length_table,
-  file = "data/results/ASV_lengths_table.tsv",
+  file = paste0("data/results/", project_name, "ASV_lengths_table.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = TRUE,
@@ -559,7 +559,7 @@ track_reads
 # Export this table as a .tsv
 write.table(
   track_reads,
-  file = "data/results/track_reads_table.tsv",
+  file = paste0("data/results/", project_name, "track_reads_table.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = FALSE
@@ -580,7 +580,7 @@ write.table(
 
 write.table(
   seqtab_nochim,
-  file = "data/results/PROJECTNAME_sequence-table.tsv",
+  file = paste0("data/results/", project_name, "_sequence-table.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = TRUE,
@@ -634,7 +634,7 @@ View(seqtab_nochim_md5)
 # sequences
 write.table(
   seqtab_nochim_md5,
-  file = "data/results/PROJECT_sequence-table-md5.tsv",
+  file = paste0("data/results/", project_name, "_sequence-table-md5.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = TRUE,
@@ -692,7 +692,7 @@ save(
 
 write.table(
   seqtab_nochim_transpose_md5,
-  file = "data/results/PROJECTNAME_feature-table_md5.tsv",
+  file = paste0("data/results/", project_name, "_feature-table_md5.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = TRUE,
@@ -710,14 +710,18 @@ write.fasta(
   names = repseq_nochim_md5_asv$md5,
   open = "w",
   as.string = FALSE,
-  file.out = "data/results/PROJECTNAME_rep-seq.fas"
+  file.out = paste0("data/results/", project_name, "_rep-seq.fas")
 )
 
 # This exports all the ASVs and their respective md5 hashes as a two-column
 # table.
 write.table(
   repseq_nochim_md5_asv,
-  file = "data/results/PROJECTNAME_representative_sequence_md5_table.tsv",
+  file = paste0(
+    "data/results/",
+    project_name,
+    "_representative_sequence_md5_table.tsv"
+  ),
   quote = FALSE,
   sep = "\t",
   row.names = FALSE

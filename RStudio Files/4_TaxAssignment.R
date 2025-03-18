@@ -145,7 +145,7 @@ save(
 
 write.table(
   taxonomy_rdp,
-  file = "data/results/PROJECTNAME_REFERENCE_taxonomy.tsv",
+  file = paste0("data/results/", project_name, "taxonomy.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = FALSE
