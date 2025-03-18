@@ -47,6 +47,9 @@ install.packages("rMSA", repos = "https://mhahsler.r-universe.dev")
 setwd(
   "/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME"
 )
+# Save project name as an object
+project_name <- basename(getwd())
+
 # Create all the subdirectories we will use
 # Define the directory names
 dir_names <- c(
