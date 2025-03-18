@@ -32,10 +32,13 @@ setwd(
 reference_url <- "https://www.dropbox.com/scl/fi/qagm6nh1chgidlzktaslr/MIDORI2_UNIQ_NUC_GB260_CO1_DADA2_noInsect.fasta.gz?rlkey=ibm0x4k6bspt31u9ekq7gvizd&dl=1"
 # Use this link for a much reduced reference database
 reference_url <- "https://www.dropbox.com/scl/fi/885yhlno5kwcz0eja5vbe/midori_COI_genus_dada2.fasta.gz?rlkey=pf80nkf9tf3kpwwno2os584o9&dl=1"
-# Download and unzip
-dest_file <- sub("\\?dl=1$", "", basename(reference_url))
+# Specify destination file and download
+dest_file <- sub("\\.fasta\\.gz.*$", ".fasta.gz", basename(reference_url))
 download.file(reference_url, paste0("ref/", dest_file), mode = "wb")
-gunzip(paste0("ref/", dest_file), remove = TRUE)
+
+# Specify decompressed file and unzip
+decompressed_file <- sub("\\.gz$", "", paste0("ref/", dest_file))
+gunzip(paste0("ref/", dest_file), destname = decompressed_file, remove = TRUE)
 
 ## Assign Taxonomy With DADA2 ==================================================
 # Assign taxonomy. tryRC determines whether to also include the reverse
@@ -61,11 +64,12 @@ gunzip(paste0("ref/", dest_file), remove = TRUE)
 
 # taxLevels defines what taxonomic rank each of the levels shown in the above
 # example represents.
-# Change the path after "seqtab_nochim" to your reference database.
+# If you used your own database, change the path after "seqtab_nochim" to your
+# reference database.
 
 taxonomy <- assignTaxonomy(
   seqtab_nochim,
-  "ref/REFERENCE_DATABASE.fasta",
+  decompressed_file,
   taxLevels = c(
     "Kingdom",
     "Phylum",
