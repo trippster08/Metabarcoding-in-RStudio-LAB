@@ -559,7 +559,7 @@ track_reads
 # Export this table as a .tsv
 write.table(
   track_reads,
-  file = paste0("data/results/", project_name, "track_reads_table.tsv"),
+  file = paste0("data/results/", project_name, "_track_reads_table.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = FALSE
@@ -681,7 +681,7 @@ save(
   seqtab_nochim_md5,
   repseq_nochim_md5_asv,
   seqtab_nochim_transpose_md5,
-  file = "data/results/feattab.RData"
+  file = "data/working/feattab.RData"
 )
 
 ## Export Feature-Table with md5 Hash =========================================
