@@ -65,7 +65,7 @@ sequence_counts_trimmed
 # reverse reads, regardless if one has reads (although if one is empty,
 # the other should be as well).
 
-### Remove empty sample files --------------------------------------------------
+## Remove empty sample files ===================================================
 # This saves the R1 fastq for the sample file only if both the R1 and R2 sample
 # files have reads.
 trimmed_F_exists <- trimmed_F[
@@ -253,16 +253,6 @@ sequence_counts_filtered <- sapply(filtered_F, function(file) {
 names(sequence_counts_filtered) <- sample_names_filtered
 sequence_counts_filtered
 
-# Export out as a tsv
-write.table(
-  filtered_summary,
-  file = paste0("data/results/", project_name, "filtered_read_count.tsv"),
-  quote = FALSE,
-  sep = "\t",
-  row.names = TRUE,
-  col.names = NA
-)
-
 # Save all the objects created to this point
 save(
   path_to_filtered,
@@ -271,7 +261,17 @@ save(
   filtered_summary,
   sample_names_filtered,
   sequence_counts_filtered,
-  file = "data/working/out.Rdata"
+  file = "data/working/filtered_summary.Rdata"
+)
+
+# Export out as a tsv
+write.table(
+  filtered_summary,
+  file = paste0("data/results/", project_name, "filtered_read_count.tsv"),
+  quote = FALSE,
+  sep = "\t",
+  row.names = TRUE,
+  col.names = NA
 )
 
 ## Estimating Error Rates and Denoising ========================================
@@ -378,8 +378,8 @@ save(
 ## Merge Paired Sequences ======================================================
 
 # Here we merge the paired reads. merged calls for the forward denoising result
-# (denoised_F), then the forward filtered and truncated reads (filtered_F), then the
-# same for the reverse reads (denoised_R and filtered_R).
+# (denoised_F), then the forward filtered and truncated reads (filtered_F),
+# then the same for the reverse reads (denoised_R and filtered_R).
 
 # You can change the minimum overlap (minOverlap), and the number of mismatches
 # that are allowed in the overlap region (maxMismatch). Default values are
@@ -449,7 +449,7 @@ write.fasta(
   names = repseq_chimera,
   open = "w",
   as.string = FALSE,
-  file.out = past0("data/results/", project_name, "rep-seq_chimeras.fas")
+  file.out = past0("data/results/", project_name, "_rep-seq_chimeras.fas")
 )
 
 ## Examine Sequence Lengths and Trim ===========================================
@@ -462,7 +462,7 @@ seq_length_table
 # Export this table as a .tsv
 write.table(
   seq_length_table,
-  file = paste0("data/results/", project_name, "ASV_lengths_table.tsv"),
+  file = paste0("data/results/", project_name, "_ASV_lengths_table.tsv"),
   quote = FALSE,
   sep = "\t",
   row.names = TRUE,
