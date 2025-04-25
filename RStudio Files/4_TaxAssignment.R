@@ -21,7 +21,10 @@ library(R.utils)
 # Use this link for a full reference database based on the Midori COI database
 # (www.reference-midori.info)
 reference_url <- "https://www.dropbox.com/scl/fi/qagm6nh1chgidlzktaslr/MIDORI2_UNIQ_NUC_GB260_CO1_DADA2_noInsect.fasta.gz?rlkey=ibm0x4k6bspt31u9ekq7gvizd&dl=1"
-# Use this link for a much reduced reference database
+# Use this link for a much reduced reference database. This database only
+# contains a single sequence for each Genus in the original Midori pipeline. It
+# will not give you great taxonomic assignment, and is really only useful for
+# demonstrative purposes (to see if it works) or for a very rough assignment.
 reference_url <- "https://www.dropbox.com/scl/fi/885yhlno5kwcz0eja5vbe/midori_COI_genus_dada2.fasta.gz?rlkey=pf80nkf9tf3kpwwno2os584o9&dl=1"
 # Specify destination file and download
 ref_gzip <- sub("\\.fasta\\.gz.*$", ".fasta.gz", basename(reference_url))
