@@ -22,38 +22,43 @@ However, before running RStudio, you must make sure the necessary programs are i
 ### Install and Update Computer Programs
 Make sure you have both R and RStudio already installed and updated on your computer. If you have an SI computer, you can load/update both through the Smithsonian's Self Service Application.
 
-#### Install miniconda
-To install miniconda, go to `https://docs.conda.io/en/latest/miniconda.html` and download the Mac OS X 64-bit (bash installer). Open a new command window, go to Downloads/, and run the downloaded shell script to install conda.
-
-Below is just an example, so replace `Miniconda3-latest-MacOSX-x86_64.sh` with the downloaded file name.
+#### Install miniforge
+We are going to use the open-source version of miniconda, called miniforge, to install other necessary programs. To install miniforge you need to firts download the correct installer file for your operating system. The following code will do so.
 ```
-sh Miniconda3-latest-MacOSX-x86_64.sh
+wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
 ```
 
-Find and enter the folder containing conda (mine is ~/miniconda3) cd ~/miniconda3
+Next we run this script with:
+```
+bash Miniforge3-$(uname)-$(uname -m).sh
+```
+You will get several prompts, including to accept the terms, placement of the program, and whether you want to initialize conda when the terminal is opened. We usually say "yes" to all these. You will need to close and reopen the terminal for conda to be ready to install other programs. 
 
-#### Install biopython
-```
-conda install -c conda-forge biopython
-```
-Add bioconda channel and other channels needed for bioconda. Run this in the order shown (this sets priority, with highest priority last).
+We installing programs, we will use the command "mamba" instead of the traditional "conda" because it is usually faster at resolving dependencies. You can still use "conda" if you like.
+
+#### Set Channel Preferences
+Add bioconda channel and other channels needed for downloading and installing programs. Run this in the order shown, or all at once (this sets priority, with highest priority last).
 ```
 conda config --add channels defaults
-```
-```
 conda config --add channels bioconda
-```
-```
 conda config --add channels conda-forge
+conda config --set channel_priority strict
 ```
 #### Install cutadapt
-We install cutadapt and create a cutadapt conda environment (called cutadaptenv) simultaneously. I typically check the anoconda webpage for cutadapt https://anaconda.org/bioconda/cutadapt and specify the version listed. The most up-to-date version is not always installed if not specified. v4.4 is an example, replace with the current version.
+We install cutadapt and create a cutadapt conda environment (called cutadaptenv) simultaneously. I typically check the anoconda webpage for cutadapt https://anaconda.org/bioconda/cutadapt and specify the version listed. The most up-to-date version is not always installed if not specified. v5.0 is an example, replace with the current version.
+
+First, we need to initialize mamba for our shell.
 ```
-conda create -n cutadapt cutadapt=5
+mamba init
 ```
-You may get an error telling you that cutadapt 4.4 does not exist or cannot be found. This typically happens when installing on a Mac with M1/M2 architecture. In this case, you have to use an altered version of this code.
+You will need to close and reopen the terminal
+
 ```
-CONDA_SUBDIR=osx-64 conda create -n cutadapt cutadapt=5
+mamba create -n cutadapt cutadapt=5.0
+```
+You may get an error telling you that cutadapt 5.0 does not exist or cannot be found. This typically happens when installing on a Mac with M1/M2 architecture. In this case, you have to use an altered version of this code.
+```
+CONDA_SUBDIR=osx-64 mamba create -n cutadapt cutadapt
 ```
 Installation usually only has to be done once for your computer. Periodically you may want to update these programs.
 
@@ -63,14 +68,14 @@ If you have not updated either conda or cutadapt in a while, you may want to do 
 Update conda
 ```
 ```
-conda update conda
+mamba updata --all
 ```
 Activate the cutadapt environment, update it, and check the updated version.
 ```
-conda activate cutadapt
+mamba activate cutadapt
 ```
 ```
-conda update cutadapt
+mamba update --all
 ```
 ```
 cutadapt --version
@@ -78,14 +83,14 @@ cutadapt --version
 If the updated version is not the latest version shown on the webpage: https://anaconda.org/bioconda/cutadapt, delete the current
 environment
 ```
-conda deactivate
+mamba deactivate
 ```
 ```
-conda remove -n cutadapt --all
+mamba remove -n cutadapt --all
 ```
 Check to make sure its gone
 ```
-conda env list
+mamba env list
 ```
 Reinstall cutadapt with the current version
 ```
@@ -135,11 +140,11 @@ Here we use DADA2 to quality-filter and quality-trim reads, estimate error rates
 [3b - DADA2 multiple genes](https://github.com/trippster08/Metabarcoding-in-RStudio-LAB/blob/main/RStudio%20Files/3b%20Metabarcoding_Dada2_multiple_genes.R)
 
 ## Assign Taxonomy
-Here we use an [RDP identifier](https://benjjneb.github.io/dada2/assign.html) through DADA2 to assign taxonomic identities to ASV's. This section requires a reference library. We will supply you with a reference library or you can supply your own. Open [4_TaxAssignment.R](RStudio_Files/4_TaxAssignment.R) and follow the directions.
+Here we use an [RDP identifier](https://benjjneb.github.io/dada2/assign.html) through DADA2 and BLAST+ through [rBLAST](https://github.com/mhahsler/rBLAST) to assign taxonomic identities to ASV's. This section requires a reference library.  We will supply you with a reference library based on the [Midori](www.reference-midori.info) reference database, or you can supply your own. Open [4_TaxAssignment.R](RStudio_Files/4_TaxAssignment.R) and follow the directions.
 
 ## Visualize Results
 
-Here we use primarily [vegan](https://github.com/vegandevs/vegan) to visualize your results. We will explore our results multiple ways. Open [5_VisualizeResults.R](RStudio_Files/5_VisualizeResults.R) and follow the directions. vegan is a very expansive diversity tool and what we do here is only a fraction of it's capabilities. [vegan vignetes](https://vegandevs.r-universe.dev/vegan) is one place to go to find lots of links other aspects of the program, although it gets a little into the weeds. Most of the visualization for this pipeline is from an unaffiliated website [Vegan tutorial](https://peat-clark.github.io/BIO381/veganTutorial.html).
+Here we primarily use the program [vegan](https://github.com/vegandevs/vegan) to visualize your results. We will explore our results multiple ways. Open [5_VisualizeResults.R](RStudio_Files/5_VisualizeResults.R) and follow the directions. vegan is a very expansive diversity tool and what we do here is only a fraction of it's capabilities. [vegan vignetes](https://vegandevs.r-universe.dev/vegan) is one place to find lots of links to other aspects of the program, although it gets a little into the weeds. Most of the visualization for this pipeline is from an unaffiliated website found here: [Vegan tutorial](https://peat-clark.github.io/BIO381/veganTutorial.html).
 
 ## phyloseq
 [phyloseq](https://github.com/joey711/phyloseq) is a R library that allows for manipulation, visualization, and analysis of metabarcoding data. This section describes how to set up and load your denoised results from DADA2 into phyloseq, how to perform some preliminary analyses, ana how to visualize a few basic results. Open [6_phyloseq.R](RStudio_Files/6_phyloseq.R) and follow the directions.
