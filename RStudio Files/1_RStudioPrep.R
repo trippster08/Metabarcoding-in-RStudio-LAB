@@ -13,7 +13,7 @@ BiocManager::install("phyloseq", ask = FALSE)
 BiocManager::install("msa", ask = FALSE)
 BiocManager::install("DECIPHER", ask = FALSE)
 BiocManager::install("rBLAST", ask = FALSE)
-BiocManager::install("rBLAST", ask = FALSE)
+BiocManager::install("ShortRead", ask = FALSE)
 
 # Install and other libraries you may need (or install through
 # "Install Packages" window). Libraries will only need to be installed once.
