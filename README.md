@@ -51,8 +51,8 @@ First, we need to initialize mamba for our shell.
 ```
 mamba init
 ```
-You will need to close and reopen the terminal
-
+You will need to close and reopen the terminal.
+Next, install cutadapt as an conda environment.
 ```
 mamba create -n cutadapt cutadapt=5.0
 ```
