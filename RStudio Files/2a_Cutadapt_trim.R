@@ -4,14 +4,8 @@
 # Load all R packages you may need, if not coming directly from
 # "1_Metabarcoding_R_Pipeline_ComputerPrep".
 
-library(dada2)
-library(digest)
-library(phyloseq)
 library(tidyverse)
-library(seqinr)
-library(ape)
-library(DECIPHER)
-library(ade4)
+library(ShortRead)
 
 ## File Housekeeping ===========================================================
 
@@ -20,20 +14,35 @@ library(ade4)
 # previous step in the pipeline), you don't need to do this, and
 # skip to the next RStudio command. If you need to set your working directory,
 # substitute your own path for the one below.
-setwd ("/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME")
-
+setwd(
+  "/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME"
+)
 
 # Make a list of all the files in your "data/raw" folder.
-reads.to.trim <- list.files("data/raw")
-head(reads.to.trim)
+reads_to_trim <- list.files("data/raw")
+head(reads_to_trim)
 # Separate files by read direction (R1,R2), and save each
-reads.to.trim.F <- reads.to.trim[str_detect(reads.to.trim, "R1_001.fastq.gz")]
-reads.to.trim.R <- reads.to.trim[str_detect(reads.to.trim, "R2_001.fastq.gz")]
+reads_to_trim_F <- reads_to_trim[str_detect(reads_to_trim, "R1_001.fastq.gz")]
+reads_to_trim_R <- reads_to_trim[str_detect(reads_to_trim, "R2_001.fastq.gz")]
+# Look to ensure that there are the same number of F and R reads
+length(reads_to_trim_F)
+length(reads_to_trim_R)
+# Separate the elements of "reads_to_trim_F" by underscore, and save the first
+# element as "sample_names".
+sample_names_raw <- sapply(strsplit(basename(reads_to_trim_F), "_"), `[`, 1)
+head(sample_names_raw)
 
-# Separate the elements of "reads.to.trim.F" by underscore, and save the first
-# element as "sample.names".
-sample.names <- sapply(strsplit(basename(reads.to.trim.F), "_"), `[`, 1)
-head(sample.names)
+# Count the number of reads in each sample.
+sequence_counts_raw <- sapply(
+  paste0("data/raw/", reads_to_trim_F),
+  function(file) {
+    fastq_data <- readFastq(file)
+    length(fastq_data)
+  }
+)
+# Name these counts with your sample names
+names(sequence_counts_raw) <- sample_names_raw
+head(sequence_counts_raw)
 
 # Define the path to your primer definition fasta file, if you have more than
 # one potential primer to trim. This path will be different for each user.
@@ -67,41 +76,108 @@ head(sample.names)
 # the name of the forward and reverse primer file, respectively.
 
 # THE PATHS SHOWN BELOW ARE EXAMPLES ONLY. PLEASE CHANGE PATH TO YOUR PRIMER FILES.
-path.to.Fprimers <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERF.fas"
-path.to.Rprimers <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERR.fas"
-path.to.FprimersRC <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERF_RC.fas"
-path.to.RprimersRC <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERR_RC.fas"
+path_to_Fprimers <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERF.fas"
+path_to_Rprimers <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERR.fas"
+path_to_FprimersRC <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERF_RC.fas"
+path_to_RprimersRC <- "Metabarcoding-in-RStudio-LAB-main/primers/PRIMERR_RC.fas"
+# Make sure it worked
+path_to_Fprimers
 
 ## Run Cutadapt ================================================================
 
 # Save the path to the cutadapt executable file. Your path will be different.
-cutadapt_binary <- "/Users/macdonaldk/miniconda3/envs/cutadapt/bin/cutadapt"
+cutadapt_binary <- "/Users/macdonaldk/mambaforge/envs/cutadapt/bin/cutadapt"
 
 # The following for loop runs cutadapt on paired samples, one pair at a time.
 
 # If you are not using a primer definition fasta file, and are only attempting
 # to trim a single primer from R1 and a single primer from R2, replace
-# "paste0("file:",path.to.Fprimers)" with the primer sequence. Include a "^"
+# "paste0("file:",path_to_Fprimers)" with the primer sequence. Include a "^"
 #appended to the 5' end. Do the same for both "-g" and "-G". For example:
 # "-g ^FORWARDPRIMERSEQUENCE" in quotations, followed by a comma, and
 # "-G ^REVERSEPRIMERSEQUENCE" in quotations, followed by a comma.
+# fmt: skip
 
-
-for (i in seq_along(sample.names)) {
+### Run cutadapt NO 3' trimming ------------------------------------------------
+# Run this if you have no read-through in sequences. In other words, you should
+# not find any primers on the 3' end of the sequence
+# fmt: skip
+for (i in seq_along(sample_names_raw)) {
   system2(
-    cutadapt_binary, args = c(
-      "-e 0.2 --discard-untrimmed --minimum-length 30 -n 2 -O 3 --cores=0",
-      "-g", paste0("file:",path.to.Fprimers),
-      "-a", paste0("file:",path.to.RprimersRC),
-      "-G", paste0("file:",path.to.Rprimers),
-      "-A", paste0("file:",path.to.FprimersRC),
-      "-o", paste0("data/working/trimmed_sequences/",sample.names[i],"_trimmed_R1.fastq.gz"),
-      "-p", paste0("data/working/trimmed_sequences/",sample.names[i],"_trimmed_R2.fastq.gz"),
-      paste0("data/raw/",reads.to.trim.F[i]), paste0("data/raw/",reads.to.trim.R[i])
-      )
+    cutadapt_binary,
+    args = c(
+      "-e 0.2 --discard-untrimmed --minimum-length 30 --cores=0",
+      "-g", paste0("file:", path_to_Fprimers),
+      "-G", paste0("file:", path_to_Rprimers),
+      "-o", paste0(
+        "data/working/trimmed_sequences/",
+        sample_names_raw[i],
+        "_trimmed_R1.fastq.gz"
+      ), "-p", paste0(
+        "data/working/trimmed_sequences/",
+        sample_names_raw[i],
+        "_trimmed_R2.fastq.gz"
+      ),
+      paste0("data/raw/", reads_to_trim_F[i]),
+      paste0("data/raw/", reads_to_trim_R[i])
     )
+  )
 }
+# Save all the objects we've created so far so we don't have to create these
+# again down the road if we leave this project
+save(
+  reads_to_trim,
+  reads_to_trim_F,
+  reads_to_trim_R,
+  sample_names_raw,
+  sequence_counts_raw,
+  path_to_Fprimers,
+  path_to_Rprimers,
+  file = "data/working/1_trim.RData"
+)
 
+### Run cutadapt WITH 3' trimming ----------------------------------------------
+# Run this if you have read-through in sequences. In other words, you may have
+# primers on the 3' end of reads
+# fmt: skip
+for (i in seq_along(sample_names_raw)) {
+  system2(
+    cutadapt_binary,
+    args = c(
+      "-e 0.2 --discard-untrimmed --minimum-length 30 -n 2 -O 3 --cores=0",
+      "-g", paste0("file:", path_to_Fprimers),
+      "-a", paste0("file:", path_to_RprimersRC),
+      "-G", paste0("file:", path_to_Rprimers),
+      "-A", paste0("file:", path_to_FprimersRC),
+      "-o", paste0(
+        "data/working/trimmed_sequences/",
+        sample_names_raw[i],
+        "_trimmed_R1.fastq.gz"
+      ), "-p", paste0(
+        "data/working/trimmed_sequences/",
+        sample_names_raw[i],
+        "_trimmed_R2.fastq.gz"
+      ),
+      paste0("data/raw/", reads_to_trim_F[i]),
+      paste0("data/raw/", reads_to_trim_R[i])
+    )
+  )
+}
+# Save all the objects we've created so far so we don't have to create these
+# again down the road if we leave this project
+save(
+  reads_to_trim,
+  reads_to_trim_F,
+  reads_to_trim_R,
+  sample_names_raw,
+  sequence_counts_raw,
+  path_to_Fprimers,
+  path_to_Rprimers,
+  path_to_FprimersRC,
+  path_to_RprimersRC,
+  file = "data/working/1_trim.RData"
+)
+## Parameter Descriptions ------------------------------------------------------
 # We are including our default parameters for cutadapt. You can change these
 # parameters if you have prefer others.
 
