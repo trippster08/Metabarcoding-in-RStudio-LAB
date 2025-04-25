@@ -1,4 +1,3 @@
-# 1June2022
 # 8 ASSIGN TAXONOMY ############################################################
 
 ## Load Libraries = ============================================================
@@ -11,15 +10,6 @@ library(tidyverse)
 library(seqinr)
 library(R.utils)
 
-# Set up your working directory. If you created your new project in the
-# directory you want as your working directory (or came directory from the
-# previous step in the pipeline), you don't need to do this, and
-# skip to the next RStudio command. If you need to set your working directory,
-# substitute your own path for the one below.
-setwd(
-  "/Users/USERNAME/Dropbox (Smithsonian)/Projects_Metabarcoding/PROJECTNAME"
-)
-
 ## Get Reference Database ======================================================
 # If you have your own reference database, you can either enter the path when
 # we assign taxonomy below, or move it into the ref/ directory in the main
@@ -28,17 +18,18 @@ setwd(
 # To use a supplied reference library, download into the ref folder. However, I
 # strongly recommend using your own reference.
 
-# Use this link for a full reference database
+# Use this link for a full reference database based on the Midori COI database
+# (www.reference-midori.info)
 reference_url <- "https://www.dropbox.com/scl/fi/qagm6nh1chgidlzktaslr/MIDORI2_UNIQ_NUC_GB260_CO1_DADA2_noInsect.fasta.gz?rlkey=ibm0x4k6bspt31u9ekq7gvizd&dl=1"
 # Use this link for a much reduced reference database
 reference_url <- "https://www.dropbox.com/scl/fi/885yhlno5kwcz0eja5vbe/midori_COI_genus_dada2.fasta.gz?rlkey=pf80nkf9tf3kpwwno2os584o9&dl=1"
 # Specify destination file and download
-dest_file <- sub("\\.fasta\\.gz.*$", ".fasta.gz", basename(reference_url))
-download.file(reference_url, paste0("ref/", dest_file), mode = "wb")
+ref_gzip <- sub("\\.fasta\\.gz.*$", ".fasta.gz", basename(reference_url))
+download.file(reference_url, paste0("ref/", ref_gzip), mode = "wb")
 
 # Specify decompressed file and unzip
-decompressed_file <- sub("\\.gz$", "", paste0("ref/", dest_file))
-gunzip(paste0("ref/", dest_file), destname = decompressed_file, remove = TRUE)
+reference_fasta <- sub("\\.gz$", "", paste0("ref/", ref_gzip))
+gunzip(paste0("ref/", ref_gzip), destname = reference_fasta, remove = TRUE)
 
 ## Assign Taxonomy With DADA2 ==================================================
 # Assign taxonomy. tryRC determines whether to also include the reverse
@@ -69,7 +60,7 @@ gunzip(paste0("ref/", dest_file), destname = decompressed_file, remove = TRUE)
 
 taxonomy <- assignTaxonomy(
   seqtab_nochim,
-  decompressed_file,
+  reference_fasta,
   taxLevels = c(
     "Kingdom",
     "Phylum",
@@ -149,4 +140,86 @@ write.table(
   quote = FALSE,
   sep = "\t",
   row.names = FALSE
+)
+
+## Assign Taxonomy With BLAST+ =================================================
+
+# We can also assign taxonomy using BLAST. Here we will use the program rBLAST
+# to identify our ASVs. rBLAST allows you to connect directly to the NCBI
+# server, or use a locally saved refernce database (in BLAST format)
+# One of the reasons I'm using rBLAST is that it has a command to make a
+# BLAST-formatted database from a fasta file.
+
+# Make the blast database from the supplied DADA2-formatted Midori reference
+#  database, or whatever database you are using.
+# The first line is the name of the reference database, change to the database
+# you are using. The second line is the name you want to give your BLAST
+# database. Currently, this is set up to create a directory in ref/ with the
+# name you chose, then will create all the necessary database files in that
+# directory, all using the chosen name also. I use the same directory name and
+# file name, you do not have to.
+makeblastdb(
+  "ref/midori_COI_genus_dada2.fasta",
+  db_name = "ref/midori_COI_genus/midori_COI_genus",
+  dbtype = "nucl"
+)
+
+# Next we load this database into R in the correct format for rBLAST. Give
+# the relative path to the database, and include the name you gave the database
+# in the previous step. I.e. db should be the same here as db_name is aboove
+midori_coi_db <- blast(db = "ref/midori_COI_genus/midori_COI_genus")
+
+# We need to have our representative sequences (the sequences we are going to
+# blast). We have to reformat our representative-sequence table to be a named
+# vector. Here is our representative sequence table from DADA2.
+View(repseq_nochim_md5_asv)
+
+# Make a DNAStringSet object from our representative sequences
+sequences_dna <- DNAStringSet(setNames(
+  repseq_nochim_md5_asv$ASV,
+  repseq_nochim_md5_asv$md5
+))
+View(sequences_dna)
+
+# You can also get this from the fasta file we downloaded earlier.
+sequences_fasta <- readDNAStringSet("data/results/PROJECTNAME_rep-seq.fas")
+
+# They make the same thing.
+head(sequences_dna)
+head(sequences_fasta)
+
+# Finally, we blast our representative sequences against the database we created
+taxonomy_blast <- predict(
+  midori_coi_db,
+  sequences_dna,
+  outfmt = "6 qseqid sseqid pident",
+  BLAST_args = "-perc_identity 85 -max_target_seqs 1 -qcov_hsp_perc 80"
+)
+View(taxonomy_blast)
+
+# Now lets combine the two taxonomy tables to see how the the two methods
+# compare
+taxonomy_rdp_blast <- left_join(
+  taxonomy_rdp,
+  taxonomy_blast,
+  join_by(ASV == qseqid)
+)
+
+
+# Export this table as a .tsv file. I name it with Project Name,
+# the reference library used, and taxonomy (vs. speciesID).
+write.table(
+  taxonomy,
+  file = "data/results/PROJECTNAME_REFERENCE_taxonomy.tsv",
+  quote = FALSE,
+  sep = "\t",
+  row.names = FALSE
+)
+
+save(
+  midori_coi_db,
+  sequences_dna,
+  taxonomy_blast,
+  taxonomy_rdp_blast,
+  file = "tax_rdp_blast.RData"
 )
