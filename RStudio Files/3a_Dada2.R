@@ -109,41 +109,41 @@ quality_plot_F <- plotQualityProfile(
   trimmed_F[1:length(sample_names_trimmed)],
   aggregate = TRUE
 )
-quality_plot_F
+# Set up background for building a better quality plot
+plot_build <- ggplot_build(quality_plot_F)
+x_axis_range <- plot_build$layout$panel_params[[1]]$x.range
+max_x <- x_axis_range[2]
 
+# Here we modify our quality plot to better visualize where the quality cut-off
+# should be. "Scale_x_continuous" sets the minimum and maximum x-axis values to
+# be shown.  We use "breaks=seq(a,b,c)", to indicate the first axis tick "a",
+# last tick "b", and frequency of ticks "c". We add a vertical line at every
+# tick to make it easier to see where to trim
+quality_plot_F_enhanced <- quality_plot_F +
+  scale_x_continuous(
+    limits = c(0, max_x),
+    breaks = seq(0, max_x, 10)
+  ) +
+  geom_vline(
+    xintercept = seq(0, max_x, 10),
+    color = "blue",
+    linewidth = 0.25
+  )
+quality_plot_F_enhanced
 # Export this plot as a pdf.
 ggsave(
   paste0("data/results/", project_name, "_quality_plot_F.pdf"),
-  plot = quality_plot_F,
+  plot = quality_plot_F_enhanced,
   width = 9,
   height = 9
 )
-
-# Here we modify our quality plot to better visualize where the quality cut-off
-# should be. "Scale_x_continuous" is the minimum and maximum x-axis values to be
-# shown.  We use "breaks=seq(a,b,c)", to indicate the first axis tick "a", last
-# tick "b", and frequency of ticks "c". The example shown results in a plot that
-# starts at 250 bp, ends at 290 bp, and has axis ticks every 5 bp.
-quality_plot_F +
-  scale_x_continuous(limits = c(250, 290), breaks = seq(250, 290, 5))
 
 # Examine the reverse reads as you did the forward.
 quality_plot_R <- plotQualityProfile(
   trimmed_R[1:length(sample_names_trimmed)],
   aggregate = TRUE
 )
-quality_plot_R
 
-# Export this plot as a pdf.
-ggsave(
-  paste0("data/results/", project_name, "_quality_plot_R.pdf"),
-  plot = quality_plot_R,
-  width = 9,
-  height = 9
-)
-
-quality_plot_R +
-  scale_x_continuous(limits = c(250, 290), breaks = seq(250, 290, 5))
 
 # Save all the objects created to this point in this section
 save(
