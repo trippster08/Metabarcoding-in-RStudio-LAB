@@ -49,7 +49,7 @@ setwd(
 )
 # Save project name as an object
 project_name <- basename(getwd())
-
+project_name
 # Create all the subdirectories we will use
 # Define the directory names
 dir_names <- c(
