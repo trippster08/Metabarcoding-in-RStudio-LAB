@@ -449,7 +449,7 @@ write.fasta(
   names = repseq_chimera,
   open = "w",
   as.string = FALSE,
-  file.out = past0("data/results/", project_name, "_rep-seq_chimeras.fas")
+  file.out = paste0("data/results/", project_name, "_rep-seq_chimeras.fas")
 )
 
 ## Examine Sequence Lengths and Trim ===========================================
