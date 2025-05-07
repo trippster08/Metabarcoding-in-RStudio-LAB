@@ -162,7 +162,7 @@ write.table(
 # directory, all using the chosen name also. I use the same directory name and
 # file name, you do not have to.
 makeblastdb(
-  reference_url,
+  reference_fasta,
   db_name = "ref/midori_COI/midori_COI",
   dbtype = "nucl"
 )
