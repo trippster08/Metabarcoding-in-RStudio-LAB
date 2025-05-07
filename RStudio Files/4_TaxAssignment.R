@@ -61,18 +61,20 @@ gunzip(paste0("ref/", ref_gzip), destname = reference_fasta, remove = TRUE)
 # If you used your own database, change the path after "seqtab_nochim" to your
 # reference database.
 
+# We want to define the taxonomic levels of our reference database.
+tax_levels <- c(
+  "Phylum",
+  "Class",
+  "Order",
+  "Family",
+  "Genus",
+  "species"
+)
+
 taxonomy <- assignTaxonomy(
   seqtab_nochim,
   reference_fasta,
-  taxLevels = c(
-    "Kingdom",
-    "Phylum",
-    "Class",
-    "Order",
-    "Family",
-    "Genus",
-    "species"
-  ),
+  taxLevels = tax_levels,
   tryRC = FALSE,
   minBoot = 50,
   outputBootstraps = TRUE,
@@ -191,13 +193,25 @@ head(sequences_dna)
 head(sequences_fasta)
 
 # Finally, we blast our representative sequences against the database we created
-taxonomy_blast <- predict(
+tax_blast <- predict(
   midori_coi_db,
   sequences_dna,
   outfmt = "6 qseqid sseqid pident",
   BLAST_args = "-perc_identity 85 -max_target_seqs 1 -qcov_hsp_perc 80"
 )
+View(tax_blast)
+
+# Now we split the taxonomy (sseqid in the table) into a column for each
+# taxonomic level
+taxonomy_blast <- tax_blast %>%
+  separate(
+    sseqid,
+    into = tax_levels,
+    sep = ";",
+    remove = FALSE
+  )
 View(taxonomy_blast)
+
 
 # Now lets combine the two taxonomy tables to see how the the two methods
 # compare
