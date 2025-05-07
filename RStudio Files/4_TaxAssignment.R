@@ -182,8 +182,7 @@ sequences_dna <- DNAStringSet(setNames(
   repseq_nochim_md5_asv$ASV,
   repseq_nochim_md5_asv$md5
 ))
-View(sequences_dna)
-
+sequences_dna
 # You can also get this from the fasta file we downloaded earlier.
 sequences_fasta <- readDNAStringSet("data/results/PROJECTNAME_rep-seq.fas")
 
