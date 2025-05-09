@@ -261,7 +261,7 @@ save(
   filtered_summary,
   sample_names_filtered,
   sequence_counts_filtered,
-  file = "data/working/filtered_summary.Rdata"
+  file = "data/working/3_filtered_summary.Rdata"
 )
 
 # Export out as a tsv
@@ -681,7 +681,7 @@ save(
   seqtab_nochim_md5,
   repseq_nochim_md5_asv,
   seqtab_nochim_transpose_md5,
-  file = "data/working/feattab.RData"
+  file = "data/working/6_feattab.RData"
 )
 
 ## Export Feature-Table with md5 Hash =========================================
