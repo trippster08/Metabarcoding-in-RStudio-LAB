@@ -126,6 +126,7 @@ for (i in seq_along(sample_names_raw)) {
 # Save all the objects we've created so far so we don't have to create these
 # again down the road if we leave this project
 save(
+  project_name,
   reads_to_trim,
   reads_to_trim_F,
   reads_to_trim_R,
@@ -166,6 +167,7 @@ for (i in seq_along(sample_names_raw)) {
 # Save all the objects we've created so far so we don't have to create these
 # again down the road if we leave this project
 save(
+  project_name,
   reads_to_trim,
   reads_to_trim_F,
   reads_to_trim_R,
