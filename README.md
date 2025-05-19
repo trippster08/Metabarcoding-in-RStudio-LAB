@@ -125,7 +125,7 @@ Open RStudio, and open `1_RstudioPrep.R` in the Source Editor (typically the top
 
 
 ### Get Raw Reads
-Get raw reads. Whether you get them from Illumina basespace downloader or another way, all reads should already be in a directory. Place that direcectory in the main project directory.
+Get raw reads. Whether you get them from Illumina basespace downloader or another way, all reads should already be in a directory. Place that direcectory in the main project directory. *NOTE: Remove any "undetermined" read files from the folder containing your raw reads. You do not want to include these reads in your analyses.*
 
 ## Cutadapt
 We use Cutadapt to remove primer sequences from our raw reads. This section ends with primer-trimmed sequences. There are two versions of Cutadapt in this pipeline. The first version (2a) is for Illumina runs with only a single gene-product. Use the second (2b) if you have more than one gene product in your run. In this case, cutadapt will trim primers, but also sort reads depending upon which gene-specific primers it removed (e.g. it will move reads from which it removed 18S primers into an 18S folder, and reads from which it removed COI primers into a COI folder).
